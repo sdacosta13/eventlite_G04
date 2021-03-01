@@ -17,14 +17,10 @@ public class EventsController {
 	@Autowired
 	private EventService eventService;
 
-	@Autowired
-	private VenueService venueService;
-
 	@GetMapping
 	public String getAllEvents(Model model) {
 
 		model.addAttribute("events", eventService.findAll());
-		model.addAttribute("venues", venueService.findAll());
 
 		return "events/index";
 	}

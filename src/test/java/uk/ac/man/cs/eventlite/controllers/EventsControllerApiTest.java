@@ -26,6 +26,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import uk.ac.man.cs.eventlite.config.Security;
 import uk.ac.man.cs.eventlite.dao.EventService;
 import uk.ac.man.cs.eventlite.entities.Event;
+import uk.ac.man.cs.eventlite.entities.Venue;
 
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(EventsControllerApi.class)
@@ -56,7 +57,12 @@ public class EventsControllerApiTest {
 		e.setName("Event");
 		e.setDate(LocalDate.now());
 		e.setTime(LocalTime.now());
-		e.setVenue(0);
+		
+		Venue venue = new Venue();
+		venue.setCapacity(100);
+		venue.setName("Name 1");
+		
+		e.setVenue(venue);
 		when(eventService.findAll()).thenReturn(Collections.<Event>singletonList(e));
 
 		mvc.perform(get("/api/events").accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
