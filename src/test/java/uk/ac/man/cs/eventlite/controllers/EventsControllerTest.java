@@ -50,7 +50,6 @@ public class EventsControllerTest {
 	@Test
 	public void getIndexWhenNoEvents() throws Exception {
 		when(eventService.findAll()).thenReturn(Collections.<Event>emptyList());
-		when(venueService.findAll()).thenReturn(Collections.<Venue>emptyList());
 
 		mvc.perform(get("/events").accept(MediaType.TEXT_HTML)).andExpect(status().isOk())
 				.andExpect(view().name("events/index")).andExpect(handler().methodName("getAllEvents"));
@@ -63,7 +62,6 @@ public class EventsControllerTest {
 	@Test
 	public void getIndexWithEvents() throws Exception {
 		when(venue.getName()).thenReturn("Kilburn Building");
-		when(venueService.findAll()).thenReturn(Collections.<Venue>singletonList(venue));
 
 		when(event.getVenue()).thenReturn(venue);
 		when(eventService.findAll()).thenReturn(Collections.<Event>singletonList(event));
