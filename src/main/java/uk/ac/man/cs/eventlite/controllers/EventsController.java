@@ -32,7 +32,7 @@ public class EventsController {
 	@DeleteMapping("/{event}")
 	public String deleteEvent(@PathVariable Event event, RedirectAttributes redirectAttrs) {
 		eventService.delete(event);
-		redirectAttrs.addFlashAttribute("ok_message", "Greeting deleted.");
+		redirectAttrs.addFlashAttribute("ok_message", "Event deleted.");
 		return "redirect:/events";
 	}
 }
