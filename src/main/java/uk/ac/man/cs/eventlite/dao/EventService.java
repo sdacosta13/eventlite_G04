@@ -7,6 +7,7 @@ public interface EventService {
 	public long count();
 
 	public Iterable<Event> findAll();
+	public Iterable<Event> findAllByNameContaining(String infix);
 
 	public void save(Event entity);
 }
