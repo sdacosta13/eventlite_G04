@@ -62,21 +62,20 @@ public class EventsController {
 	}
 
 	
-	@PostMapping
-	public String updateEvent(@RequestBody @Valid @ModelAttribute Event updatedEvent, BindingResult errors,
+	@PostMapping("updateEvent")
+	public String updateEvent(@RequestBody @Valid @ModelAttribute Event event, BindingResult errors,
 			Model model, RedirectAttributes redirectAttrs) {
 		
-		// Prints used for debugging only. Will be removed once everything works fine.
-		System.out.println(updatedEvent.getId());
-		System.out.println(updatedEvent.getName());
-		System.out.println(updatedEvent.getTime());
-		System.out.println(updatedEvent.getDate());
-		System.out.println(updatedEvent.getVenue().getName());
+		if (errors.hasErrors()) {
+			model.addAttribute("event", event);
+			model.addAttribute("venues", venueService.findAll());
+			return "events/updateEvent";
+		}
 		
 		// The save method also acts as an update method, given that
 		// the id of the updatedEvent is same as the id of event passed
 		// to the model in the getEventById method above.
-		eventService.save(updatedEvent);
+		eventService.save(event);
 		redirectAttrs.addFlashAttribute("ok_message", "Event updated successfuly.");
 		
 		return "redirect:/events";
