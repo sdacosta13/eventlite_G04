@@ -1,0 +1,39 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="~{layouts/default}">
+<head>
+  <title>An event</title>
+</head>
+<body>
+  <div layout:fragment="content">
+    <a class="btn btn-warning" role="button" href="/events"><i class="fas fa-arrow-left" aria-hidden="true"></i> Back</a>
+
+    <h1 th:text="${event.name}">Event: %s</h1>
+    <form action="#" th:action="@{/events}" th:object="${updatedEvent}" method="post">
+      <!-- 
+          The id of the object that will be sent via post
+          from here needs to be same as the id of the event
+          attribute in the model in order to successfully update
+          the record. Otherwise, new record will be created.
+      -->
+      <input type="hidden" th:field="${event.id}"/>
+      <div class="form-section">
+        <label for="eventName">Event name</label>
+        <input class="form-control" type="text" name="eventName" id="eventName" th:field="${event.name}" autofocus="autofocus" />
+
+        <input type="hidden" th:field="${event.venue}">
+        <!-- <label for="eventName">Event Venue</label>
+        <select>
+          <option th:each="v : ${venues}" th:value="${v}" th:text="${v.name}"></option>
+        </select> -->
+        <label for="eventDate">Event date</label>
+        <input class="form-control" type="date" name="eventDate" id="eventDate" th:field="${event.date}" autofocus="autofocus" />
+
+        <label for="eventTime">Event time</label>
+        <input class="from-control" type="time" name="eventTime" id="eventTime" th:field="${event.time}" autofocus="autofocus" />
+      </div>
+      <button class="btn btn-primary" type="submit"><i class="fas fa-bookmark" aria-field="true"></i> Save</button>
+    </form>
+  </div>
+</body>
+</html>
