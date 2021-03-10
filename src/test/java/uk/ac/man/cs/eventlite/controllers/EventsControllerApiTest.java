@@ -2,12 +2,11 @@ package uk.ac.man.cs.eventlite.controllers;
 
 import static org.hamcrest.Matchers.endsWith;
 import static org.hamcrest.Matchers.equalTo;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.handler;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -71,5 +70,24 @@ public class EventsControllerApiTest {
 				.andExpect(jsonPath("$._embedded.events.length()", equalTo(1)));
 
 		verify(eventService).findAll();
+	}
+
+	@Test
+	public void deleteEventNoAuth() throws Exception {
+		mvc.perform(delete("/api/events/666")
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isUnauthorized());
+
+		verify(eventService, never()).deleteById(666);
+	}
+
+	@Test
+	public void deleteEvent() throws Exception {
+		mvc.perform(delete("/api/events/666")
+				.accept(MediaType.APPLICATION_JSON)
+				.with(user("Rob").roles(Security.ADMIN_ROLE)))
+				.andExpect(status().isNoContent());
+
+		verify(eventService).deleteById(666);
 	}
 }
