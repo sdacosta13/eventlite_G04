@@ -62,7 +62,7 @@ public class EventsController {
 	}
 
 	
-	@PostMapping("updateEvent")
+	@PostMapping(consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE, value="updateEvent")
 	public String updateEvent(@RequestBody @Valid @ModelAttribute Event event, BindingResult errors,
 			Model model, RedirectAttributes redirectAttrs) {
 		

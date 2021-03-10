@@ -1,10 +1,18 @@
 package uk.ac.man.cs.eventlite.controllers;
 
+import static org.hamcrest.Matchers.endsWith;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.flash;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.handler;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
@@ -12,6 +20,7 @@ import java.util.Collections;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -66,9 +75,37 @@ public class EventsControllerTest {
 		when(event.getVenue()).thenReturn(venue);
 		when(eventService.findAll()).thenReturn(Collections.<Event>singletonList(event));
 
-		mvc.perform(get("/events").accept(MediaType.TEXT_HTML)).andExpect(status().isOk())
-				.andExpect(view().name("events/index")).andExpect(handler().methodName("getAllEvents"));
+		mvc.perform(get("/events").accept(MediaType.TEXT_HTML))
+				.andExpect(status().isOk())
+				.andExpect(view().name("events/index"))
+				.andExpect(handler().methodName("getAllEvents"));
 
 		verify(eventService).findAll();
+	}
+	
+	@Test
+	public void updateEventWithoutAuthenticationTest() throws Exception {
+		mvc.perform(post("/events").contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.accept(MediaType.TEXT_HTML).with(csrf()))
+				.andExpect(status().isFound())
+				.andExpect(header().string("Location", endsWith("/sign-in")));
+		
+		verify(eventService, never()).save(event);
+	}
+	
+	@Test
+	public void updateEventWithAuthenticationTest() throws Exception {
+		ArgumentCaptor<Event> arg = ArgumentCaptor.forClass(Event.class);
+
+		mvc.perform(post("/events/updateEvent").with(user("Rob").roles(Security.ADMIN_ROLE))
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.accept(MediaType.TEXT_HTML).with(csrf()))
+				.andExpect(status().isFound())
+				.andExpect(view().name("redirect:/events"))
+				.andExpect(model().hasNoErrors())
+				.andExpect(handler().methodName("updateEvent"))
+				.andExpect(flash().attributeExists("ok_message"));
+
+		verify(eventService).save(arg.capture());
 	}
 }
