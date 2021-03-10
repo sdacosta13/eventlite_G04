@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import uk.ac.man.cs.eventlite.dao.EventService;
 
 @Controller
-@RequestMapping(value = "events/{eventId}", produces = { MediaType.TEXT_HTML_VALUE })
+@RequestMapping(value = "event/{eventId}", produces = { MediaType.TEXT_HTML_VALUE })
 public class EventPageController {
 	
 	@Autowired
