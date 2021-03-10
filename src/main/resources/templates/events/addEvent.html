@@ -7,7 +7,7 @@
 </head>
 <body>
   <div layout:fragment="content">
-	  <form action ="#" th:action="@{events/eventSubmit}" th:object="${event}" method="post">
+	  <form action ="#" th:action="@{eventSubmit}" th:object="${event}" method="post">
 	  	<div class="form-section">
 	  		<label>Event name</label>
 	  		<input type="text" th:field="${event.name}" id="name" name="name" placeholder="Enter event name" required>
@@ -21,11 +21,11 @@
 	  		<input type="time" th:field="${event.time}" required value="12:00">
 	  	</div>
 	  	<div class="form-section">
-	  		<label>Event Venue</label>
-			<select th:field="${event.venue}">
-				<option th:each="v : ${venues}" th:value="${v}" th:text="${v.name}"></option>
-			</select>
-	  	</div>
+  			<label>Event Venue</label>
+  			<select th:field="${event.venue}" class="form-control">
+    			<option th:each="v : ${venues}" th:value="${v.id}" th:text="${v.name}"></option>
+  			</select>
+		</div>
 	  	<button type="submit">Submit</button>
 	  </form>
   </div>
