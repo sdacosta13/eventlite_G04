@@ -28,6 +28,7 @@
           <th><i class="fas fa-calendar"></i> Date</th>
           <th><i class="fas fa-clock"></i> Time</th>
           <th sec:authorize="isAuthenticated()"></th>
+          <th sec:authorize="isAuthenticated()"></th>
         </tr>
       </thead>
       <tbody>
@@ -39,6 +40,11 @@
           <td sec:authorize="isAuthenticated()">
             <form th:action="@{/events/{id}(id=${e.id})}" th:method="delete">
               <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-trash" aria-hidden="true"></i> Delete</button>
+            </form>
+          </td>
+          <td sec:authorize="isAuthenticated()">
+            <form th:action="@{/events/updateEvent/{eventId}(eventId=${e.id})}" method="get">
+              <button type="submit" class="btn btn-info">Update</button>
             </form>
           </td>
         </tr>

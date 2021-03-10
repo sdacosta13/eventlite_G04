@@ -87,6 +87,4 @@ public class Event {
 	public void setDescription(String desc) {
 		this.description = desc;
 	}
-	
-	
 }
