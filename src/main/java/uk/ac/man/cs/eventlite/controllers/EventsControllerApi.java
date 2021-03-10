@@ -28,9 +28,9 @@ public class EventsControllerApi {
 		return eventCollection(eventService.findAll());
 	}
 
-	@DeleteMapping("/{event}")
-	public ResponseEntity<?> deleteEvent(@PathVariable Event event) {
-		eventService.delete(event);
+	@DeleteMapping("/{eventId}")
+	public ResponseEntity<?> deleteEvent(@PathVariable long eventId) {
+		eventService.deleteById(eventId);
 		return ResponseEntity.noContent().build();
 	}
 

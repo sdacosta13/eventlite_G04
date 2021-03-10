@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import uk.ac.man.cs.eventlite.dao.EventRepository;
 import uk.ac.man.cs.eventlite.dao.EventService;
 import uk.ac.man.cs.eventlite.dao.VenueService;
 import uk.ac.man.cs.eventlite.entities.Event;
@@ -29,9 +30,9 @@ public class EventsController {
 		return "events/index";
 	}
 
-	@DeleteMapping("/{event}")
-	public String deleteEvent(@PathVariable Event event, RedirectAttributes redirectAttrs) {
-		eventService.delete(event);
+	@DeleteMapping("/{eventId}")
+	public String deleteEvent(@PathVariable long eventId, RedirectAttributes redirectAttrs) {
+		eventService.deleteById(eventId);
 		redirectAttrs.addFlashAttribute("ok_message", "Event deleted.");
 		return "redirect:/events";
 	}
