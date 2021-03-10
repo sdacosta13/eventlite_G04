@@ -12,9 +12,7 @@
 
     <i th:text="${event.date} + ', ' + ${event.time}">Event Date and Time</i><br>
     <p th:text="${event.venue.name}">Venue Name</p><br>
-    <p>Long-winded description that tells you details about this particular event, I'm sure.
-    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-    </p><br>
+    <p th:text="${event.description}">Event Description</p><br>
     
 
   </div>
