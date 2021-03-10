@@ -60,6 +60,7 @@ public class InitialDataLoader implements ApplicationListener<ContextRefreshedEv
 		event1.setName("COMP23412 Showcase, group G");
 		event1.setTime(LocalTime.of(16, 0));
 		event1.setDate(LocalDate.of(2021, 5, 13));
+		event1.setDescription("An event for showcasing your product made during COMP23412. Specifically for Lab Group G");
 		event1.setVenue(venue1);
 		
 		Event event2 = new Event();
@@ -67,12 +68,14 @@ public class InitialDataLoader implements ApplicationListener<ContextRefreshedEv
 		event2.setTime(LocalTime.of(11, 0));
 		event2.setDate(LocalDate.of(2021, 5, 11));
 		event2.setVenue(venue2);
+		event2.setDescription("An event for showcasing your product made during COMP23412. Specifically for Lab Group H");
 		
 		Event event3 = new Event();
 		event3.setName("COMP23412 Showcase, group F");
 		event3.setTime(LocalTime.of(16, 00));
 		event3.setDate(LocalDate.of(2021, 5, 10));
 		event3.setVenue(venue3);
+		event3.setDescription("An event for showcasing your product made during COMP23412. Specifically for Lab Group F");
 		
 		eventService.save(event1);
 		eventService.save(event2);
