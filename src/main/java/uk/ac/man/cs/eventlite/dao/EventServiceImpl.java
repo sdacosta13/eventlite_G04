@@ -30,6 +30,10 @@ public class EventServiceImpl implements EventService {
 	public Iterable<Event> findAllByNameContaining(String infix) {
 		return eventRepository.findAllByNameContaining(infix);
 	}
+	
+	public Event findById(long id) {
+		return eventRepository.findById(id);
+	}
 
 	@Override
 	public void save(Event entity) {

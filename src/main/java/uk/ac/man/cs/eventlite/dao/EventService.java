@@ -8,6 +8,7 @@ public interface EventService {
 
 	public Iterable<Event> findAll();
 	public Iterable<Event> findAllByNameContaining(String infix);
+	public Event findById(long id);
 
 	public void save(Event entity);
 
