@@ -19,7 +19,7 @@ public class EventPageController {
 	
 	@GetMapping
 	public String getEventInfo(Model model, @PathVariable Long eventId) {
-		model.addAttribute("events", eventService.findById(eventId));
+		model.addAttribute("event", eventService.findById(eventId));
 		return "events/info-page";
 	}
 
