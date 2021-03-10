@@ -1,10 +1,13 @@
 package uk.ac.man.cs.eventlite.controllers;
 
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
+import static org.hamcrest.Matchers.endsWith;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.handler;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
@@ -70,5 +73,28 @@ public class EventsControllerTest {
 				.andExpect(view().name("events/index")).andExpect(handler().methodName("getAllEvents"));
 
 		verify(eventService).findAll();
+	}
+
+	@Test
+	public void deleteEventNoAuth() throws Exception {
+		mvc.perform(delete("/events/666")
+				.accept(MediaType.TEXT_HTML)
+				.with(csrf()))
+				.andExpect(status().isFound())
+				.andExpect(header().string("Location", endsWith("/sign-in")));
+
+		verify(eventService, never()).deleteById(666);
+	}
+
+	@Test
+	public void deleteEvent() throws Exception {
+		mvc.perform(delete("/events/666")
+				.accept(MediaType.TEXT_HTML)
+				.with(user("Rob").roles(Security.ADMIN_ROLE))
+				.with(csrf()))
+				.andExpect(status().isFound())
+				.andExpect(view().name("redirect:/events"));
+
+		verify(eventService).deleteById(666);
 	}
 }

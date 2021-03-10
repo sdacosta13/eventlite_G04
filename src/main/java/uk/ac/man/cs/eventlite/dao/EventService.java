@@ -10,4 +10,6 @@ public interface EventService {
 	public Iterable<Event> findAllByNameContaining(String infix);
 
 	public void save(Event entity);
+
+	public void deleteById(long id);
 }
