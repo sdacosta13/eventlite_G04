@@ -49,7 +49,7 @@ public class EventsController {
 		ArrayList<Event> pastEvents = new ArrayList<>();
 		ArrayList<Event> futureEvents = new ArrayList<>();
 		
-		for (Event e: eventService.findAll()) {
+		for (Event e: result) {
 			if (e.isPast()) 
 				pastEvents.add(e);
 			else
