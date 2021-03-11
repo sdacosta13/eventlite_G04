@@ -1,5 +1,7 @@
 package uk.ac.man.cs.eventlite.controllers;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Optional;
 
 import javax.validation.Valid;
@@ -35,12 +37,27 @@ public class EventsController {
 
 	@GetMapping
 	public String getAllEvents(@RequestParam(value = "name", required = false) String name, Model model) {
-		
+
+		Iterable<Event> result;
+
 		if (name == null) {
-			model.addAttribute("events", eventService.findAll());
+			result = eventService.findAll();
 		} else {
-			model.addAttribute("events", eventService.findAllByNameContaining(name));
+			result = eventService.findAllByNameContaining(name);
 		}
+
+		ArrayList<Event> pastEvents = new ArrayList<>();
+		ArrayList<Event> futureEvents = new ArrayList<>();
+		
+		for (Event e: eventService.findAll()) {
+			if (e.isPast()) 
+				pastEvents.add(e);
+			else
+				futureEvents.add(e);
+		}
+
+		model.addAttribute("pastEvents", pastEvents);
+		model.addAttribute("futureEvents", futureEvents);
 
 		return "events/index";
 	}
