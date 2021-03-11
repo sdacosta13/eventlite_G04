@@ -1,6 +1,7 @@
 package uk.ac.man.cs.eventlite.entities;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 import org.springframework.format.annotation.DateTimeFormat;
@@ -86,5 +87,9 @@ public class Event {
 	
 	public void setDescription(String desc) {
 		this.description = desc;
+	}
+	
+	public boolean isPast() {
+		return LocalDateTime.of(this.date, this.time).isBefore(LocalDateTime.now());
 	}
 }
