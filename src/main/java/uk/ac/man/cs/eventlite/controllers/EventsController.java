@@ -13,15 +13,12 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import uk.ac.man.cs.eventlite.dao.EventRepository;
 import uk.ac.man.cs.eventlite.dao.EventService;
 import uk.ac.man.cs.eventlite.dao.VenueService;
 import uk.ac.man.cs.eventlite.entities.Event;
@@ -70,7 +67,25 @@ public class EventsController {
 		// to updateEvent page and do the changes.
 		return "events/updateEvent";
 	}
-
+	
+	@GetMapping(value="/addEvent")
+	public String getEventAdder(Model model) {
+		model.addAttribute("venues", venueService.findAll());
+		model.addAttribute("event", new Event());
+		return "events/addEvent";
+	}
+	
+	@PostMapping(value="/eventSubmit")
+	public String addEvent(@RequestBody @Valid @ModelAttribute Event event, BindingResult errors,
+			Model model, RedirectAttributes redirectAttrs) {
+		if (errors.hasErrors()) {
+			model.addAttribute("event", event);
+			model.addAttribute("venues", venueService.findAll());
+			return "redirect:/events";
+		}
+		eventService.save(event);
+		return "redirect:/events";
+	}
 	@DeleteMapping("/{eventId}")
 	public String deleteEvent(@PathVariable long eventId, RedirectAttributes redirectAttrs) {
 		eventService.deleteById(eventId);
