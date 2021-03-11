@@ -3,11 +3,21 @@ package uk.ac.man.cs.eventlite.controllers;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.handler;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
-
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
+import static org.hamcrest.Matchers.endsWith;
+import static org.hamcrest.Matchers.hasProperty;
+import static org.hamcrest.CoreMatchers.is;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Collections;
 
 import org.junit.jupiter.api.Test;
@@ -70,5 +80,30 @@ public class EventsControllerTest {
 				.andExpect(view().name("events/index")).andExpect(handler().methodName("getAllEvents"));
 
 		verify(eventService).findAll();
+	}
+	@Test
+	public void eventAddDropdownTest() throws Exception{
+		mvc.perform(get("/events/addEvent").accept(MediaType.TEXT_HTML))
+		.andExpect(status().isOk())
+		.andExpect(view().name("events/addEvent"))
+		.andExpect(handler().methodName("getEventAdder"));
+		verifyNoInteractions(event);
+		verifyNoInteractions(eventService);
+		
+	}
+
+
+	@Test
+	public void testAddEventFunctionalityWithSecurity() throws Exception{
+		mvc.perform(post("/events/eventSubmit").with(user("Rob").roles(Security.ADMIN_ROLE)).with(csrf()))
+				.andExpect(redirectedUrl("/events"))
+				.andExpect(view().name("redirect:/events"));
+				
+	}
+	@Test
+	public void testAddEventFunctionalityWithoutSecurity() throws Exception{
+		mvc.perform(post("/events/eventSubmit").contentType(MediaType.APPLICATION_FORM_URLENCODED).with(csrf()))
+				.andExpect(header().string("Location", endsWith("/sign-in")));
+		verifyNoInteractions(eventService);
 	}
 }

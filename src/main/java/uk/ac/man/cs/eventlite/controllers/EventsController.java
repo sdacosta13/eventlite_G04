@@ -40,7 +40,7 @@ public class EventsController {
 	}
 	
 	@GetMapping(value="/addEvent")
-	public String addEvent(Model model) {
+	public String getEventAdder(Model model) {
 		model.addAttribute("venues", venueService.findAll());
 		model.addAttribute("event", new Event());
 		return "events/addEvent";
