@@ -27,7 +27,7 @@ public class Event {
 
 	@JsonFormat(shape = JsonFormat.Shape.STRING)
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
-	@Future(message = "Date must be in future.")
+	@Future(message = "Date must be in the future.")
 	@NotNull(message = "Date is required.")
 	private LocalDate date;
 
@@ -40,6 +40,7 @@ public class Event {
 	private String name;
 	
 	@ManyToOne
+	@NotNull(message = "Event venue must be specified.")
 	private Venue venue;
 	
 	@Size(max = 499, message = "Description must be less than 500 characters long.")
