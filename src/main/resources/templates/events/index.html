@@ -19,7 +19,9 @@
 	</form>
 	  
     <h1>All events</h1>
-	<a href="events/addEvent">Add Event</a>
+    <td sec:authorize="isAuthenticated()">
+		<a href="events/addEvent"><button class="btn btn-info">Add Event</button></a>
+    </td>
     <table class="table table-striped table-hover">
       <thead>
         <tr>
