@@ -3,30 +3,39 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/default}">
 <head>
+  <meta charset="UTF-8"/>
+  <link th:rel="stylesheet" th:href="@{assets/bootstrap-select-1.13.9/dist/css/bootstrap-select.css}"/>
+  <link th:rel="stylesheet" th:href="@{webjars/bootstrap/4.0.0-2/css/bootstrap.min.css} "/>
   <title>Add Event</title>
 </head>
 <body>
   <div layout:fragment="content">
+	  <a class="btn btn-warning" role="button" href="/events"><i class="fas fa-arrow-left" aria-hidden="true"></i> Back</a>
 	  <form action ="#" th:action="@{eventSubmit}" th:object="${event}" method="post">
-	  	<div class="form-section">
-	  		<label>Event name</label>
-	  		<input type="text" th:field="${event.name}" id="name" name="name" placeholder="Enter event name" required>
-	  	</div>
-	  	<div class="form-section">
-	  		<label>Event Date</label>
-	  		<input type="date" th:field="${event.date}" required>
-	  	</div>
-	  	<div class="form-section">
-	  		<label>Event Time</label>
-	  		<input type="time" th:field="${event.time}" required value="12:00">
-	  	</div>
-	  	<div class="form-section">
-  			<label>Event Venue</label>
+	  	<br>
+	  	<div class="form-group">
+	  		<label for="name">Event name:</label>
+	  		<input class="form-control" type="text" th:field="${event.name}" id="name" name="name" placeholder="Enter event name" required>
+	  	</div><br>
+	  	<div class="form-group">
+	  		<label>Event Date:</label>
+	  		<input class="form-control" type="date" name="date" id="date" th:field="${event.date}" required>
+	  	</div><br>
+	  	<div class="form-group">
+	  		<label>Event Time:</label>
+	  		<input class="form-control" type="time" th:field="${event.time}" required>
+	  	</div><br>
+	  	<div class="form-group">
+  			<label>Event Venue:</label>
   			<select th:field="${event.venue}" class="form-control">
     			<option th:each="v : ${venues}" th:value="${v.id}" th:text="${v.name}"></option>
   			</select>
-		</div>
-	  	<button type="submit">Submit</button>
+		</div><br>
+		<div class="form-group">
+	  		<label>Event Description:</label>
+	  		<input class="form-control" type="text" th:field="${event.description}" id="description" name="description" placeholder="Enter event description" required>
+	  	</div><br>
+	  	<button type="submit" class="btn btn-primary">Submit</button>
 	  </form>
   </div>
 </body>
