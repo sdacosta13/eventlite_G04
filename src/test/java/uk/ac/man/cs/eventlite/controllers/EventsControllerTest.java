@@ -108,7 +108,7 @@ public class EventsControllerTest {
 	
 	@Test
 	public void updateEventWithoutAuthenticationTest() throws Exception {
-		mvc.perform(post("/events").contentType(MediaType.APPLICATION_FORM_URLENCODED)
+		mvc.perform(post("/events/updateEvent").contentType(MediaType.APPLICATION_FORM_URLENCODED)
 				.accept(MediaType.TEXT_HTML).with(csrf()))
 				.andExpect(status().isFound())
 				.andExpect(header().string("Location", endsWith("/sign-in")));
@@ -119,10 +119,15 @@ public class EventsControllerTest {
 	@Test
 	public void updateEventWithAuthenticationTest() throws Exception {
 		ArgumentCaptor<Event> arg = ArgumentCaptor.forClass(Event.class);
-
+		
 		mvc.perform(post("/events/updateEvent").with(user("Rob").roles(Security.ADMIN_ROLE))
-				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
-				.accept(MediaType.TEXT_HTML).with(csrf()))
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+				.with(csrf())
+				.param("name", "name")
+				.param("date", "2022-03-01")
+				.param("time", "")
+				.param("venue.id", "1")
+				.accept(MediaType.TEXT_HTML))
 				.andExpect(status().isFound())
 				.andExpect(view().name("redirect:/events"))
 				.andExpect(model().hasNoErrors())
@@ -141,7 +146,6 @@ public class EventsControllerTest {
 		verifyNoInteractions(eventService);
 		
 	}
-
 
 	@Test
 	public void testAddEventFunctionalityWithSecurity() throws Exception{

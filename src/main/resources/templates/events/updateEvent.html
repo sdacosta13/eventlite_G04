@@ -11,7 +11,6 @@
   <div layout:fragment="content">
     <a class="btn btn-warning" role="button" href="/events"><i class="fas fa-arrow-left" aria-hidden="true"></i> Back</a>
 
-    <br><h1 th:text="${event.name}">Event: %s</h1><br>
     <form action="#" th:action="@{/events/updateEvent}" th:object="${event}" method="post">
       <!-- 
           The id of the object that will be sent via post
@@ -21,11 +20,11 @@
       -->
       <input type="hidden" th:field="${event.id}"/>
 
-      <div class="form-group" th:classappend="${#fields.hasErrors('name')}? has-error">
-        <label for="name">Event name: </label>
-        <input class="form-control" type="text" name="name" id="name" th:field="${event.name}" autofocus="autofocus" required />
+      <div class="form-group has-error has-feedback" th:classappend="${#fields.hasErrors('name')}? has-error">
+        <label class="control-label" for="name">Event name: </label>
+        <input class="form-control" type="text" name="name" id="name" th:field="${event.name}" autofocus="autofocus" />
 
-        <p class="text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">errors</p>
+        <span class="text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">errors</span>
       </div><br>
 
       <!-- 
@@ -33,28 +32,29 @@
           venue is linked.
       -->
       <div class="form-group">
-        <label for="venue">Event Venue: </label>
+        <label class="control-label" for="venue">Event Venue: </label>
         <select class="form-control selectpicker" th:value="${event.venue.id}" th:field="${event.venue}">
           <option th:each="v : ${venues}" th:value="${v.id}" th:text="${v.name}"></option>
         </select>
       </div><br>
 
-      <div class="form-group" th:classappend="${#fields.hasErrors('date')}? has-error">
-        <label for="date">Event date: </label>
-        <input class="form-control" type="date" name="date" id="date" th:field="${event.date}" autofocus="autofocus" required />
+      <div class="form-group has-error has-feedback" th:classappend="${#fields.hasErrors('date')}? has-error">
+        <label class="control-label" for="date">Event date: </label>
+        <input class="form-control" type="date" name="date" id="date" th:field="${event.date}" autofocus="autofocus" />
 
-        <p class="text-danger" th:if="${#fields.hasErrors('date')}" th:errors="*{date}">errors</p>
+        <span class="text-danger" th:if="${#fields.hasErrors('date')}" th:errors="*{date}">errors</span>
       </div><br>
 
-      <div class="form-group" th:classappend="${#fields.hasErrors('time')}? has-error">
-        <label for="time">Event time: </label>
-        <input class="form-control" type="time" name="time" id="time" th:field="${event.time}" autofocus="autofocus" required/>
-        <p class="text-danger" th:if="${#fields.hasErrors('time')}" th:errors="*{time}">errors</p>
+      <div class="form-group has-error has-feedback" th:classappend="${#fields.hasErrors('time')}? has-error">
+        <label class="control-label" for="time">Event time: </label>
+        <input class="form-control" type="time" name="time" id="time" th:field="${event.time}" autofocus="autofocus"/>
+        <span class="text-danger" th:if="${#fields.hasErrors('time')}" th:errors="*{time}">errors</span>
       </div><br>
 
-      <div class="form-group">
-        <label for="description">Event description: </label>
+      <div class="form-group has-error has-feedback" th:classappend="${#fields.hasErrors('description')}? has-error">
+        <label class="control-label" for="description">Event description: </label>
         <textarea class="form-control" rows="3" th:field="${event.description}"></textarea>
+        <span class="text-danger" th:if="${#fields.hasErrors('description')}" th:errors="*{description}">errors</span>
       </div>
 
       <button class="btn btn-primary" type="submit"><i class="fas fa-bookmark" aria-field="true"></i> Update </button>
