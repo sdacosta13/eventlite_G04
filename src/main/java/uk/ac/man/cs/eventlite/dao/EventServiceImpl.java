@@ -43,6 +43,16 @@ public class EventServiceImpl implements EventService {
 		return eventRepository.findAllByNameContaining(infix);
 	}
 	
+	@Override
+	public Iterable<Event> findAllContainingAlternativeIgnoreCaseOrderByNameAscDateAsc(String prefix, String suffix, String infix, String full) {
+		return eventRepository.findAllContainingAlternativeIgnoreCaseOrderByNameAscDateAsc(prefix, suffix, infix, full);
+	}
+	
+	@Override
+	public Iterable<Event> findAllFromSearch(String name) {
+		return findAllContainingAlternativeIgnoreCaseOrderByNameAscDateAsc(name + " %", "% " + name, "% " + name + " %", name);
+	}
+	
 	public Event findById(long id) {
 		return eventRepository.findById(id);
 	}

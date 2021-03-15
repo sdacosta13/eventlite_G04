@@ -35,11 +35,10 @@ public class EventsController {
 
 	@GetMapping
 	public String getAllEvents(@RequestParam(value = "name", required = false) String name, Model model) {
-		
 		if (name == null) {
 			model.addAttribute("events", eventService.findAll());
 		} else {
-			model.addAttribute("events", eventService.findAllByNameContaining(name));
+			model.addAttribute("events", eventService.findAllFromSearch(name));
 		}
 
 		return "events/index";

@@ -10,6 +10,8 @@ public interface EventService {
 
 	public Iterable<Event> findAll();
 	public Iterable<Event> findAllByNameContaining(String infix);
+	public Iterable<Event> findAllContainingAlternativeIgnoreCaseOrderByNameAscDateAsc(String prefix, String suffix, String infix, String full);
+	public Iterable<Event> findAllFromSearch(String infix);
 	public Event findById(long id);
 
 	public void save(Event entity);
