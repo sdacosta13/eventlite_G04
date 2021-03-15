@@ -19,6 +19,9 @@ public class Venue {
 
 	private int capacity;
 	
+	private String address;
+	
+	private String postcode;
 	public Venue() {
 	}
 
@@ -44,5 +47,17 @@ public class Venue {
 
 	public void setCapacity(int capacity) {
 		this.capacity = capacity;
+	}
+	public String getAddress() {
+		return this.address;
+	}
+	public void setAddressLine1(String addr) {
+		this.address = addr;
+	}
+	public String getPostcode() {
+		return this.postcode;
+	}
+	public void setPostcode(String postcode) {
+		this.postcode = postcode;
 	}
 }

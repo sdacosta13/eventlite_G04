@@ -1,0 +1,36 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+<head>
+  <meta charset="UTF-8"/>
+  <link th:rel="stylesheet" th:href="@{assets/bootstrap-select-1.13.9/dist/css/bootstrap-select.css}"/>
+  <link th:rel="stylesheet" th:href="@{webjars/bootstrap/4.0.0-2/css/bootstrap.min.css} "/>
+  <title>Add Venue</title>
+</head>
+<body>
+  <div layout:fragment="content">
+	  <a class="btn btn-warning" role="button" href="/events"><i class="fas fa-arrow-left" aria-hidden="true"></i> Back</a>
+	  <form action ="#" th:action="@{venueSubmit}" th:object="${venue}" method="post">
+	  	<br>
+	  	<div class="form-group">
+	  		<label >Venue name:</label>
+	  		<input class="form-control" type="text" th:field="${venue.name}" maxlength="256" placeholder="Enter venue name" required>
+	  	</div><br>
+	  	<div class="form-group">
+	  		<label>Venue Address:</label>
+	  		<input class="form-control" type="text" th:field="${venue.address}" maxlength="256" required>
+	  	</div><br>
+	  	<div class="form-group">
+	  		<label>Venue Postcode:</label>
+	  		<input class="form-control" type="text" th:field="${venue.postcode}" maxlength="256" required>
+	  	</div><br>
+	  	<div class="form-group">
+	  		<label>Venue Capacity:</label>
+	  		<input class="form-control" type="number" th:field="${venue.capacity}" min="1"required>
+	  	</div><br>
+	  	<button type="submit" class="btn btn-primary">Submit</button>
+	  </form>
+  </div>
+</body>
+</html>
