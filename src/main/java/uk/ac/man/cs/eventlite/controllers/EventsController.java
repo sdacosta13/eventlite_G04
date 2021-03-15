@@ -62,29 +62,6 @@ public class EventsController {
 		return "events/index";
 	}
 	
-	
-	@GetMapping("updateEvent/{id}")
-	public String getEventById(@PathVariable("id") long id, Model model) {
-		Optional<Event> event = eventService.findEventById(id);
-		
-		if (event.isEmpty()) {
-			// If the event does not exist (null),
-			// redirect to events page.
-			
-			return "redirect:/events";
-		}
-		
-		model.addAttribute("event", event.get());
-		
-		// Add all available venues as model attributes so that
-		// the user will be able to edit the venue attribute too.
-		model.addAttribute("venues", venueService.findAll());
-		
-		// With all that information fetched, redirect
-		// to updateEvent page and do the changes.
-		return "events/updateEvent";
-	}
-	
 	@GetMapping(value="/addEvent")
 	public String getEventAdder(Model model) {
 		model.addAttribute("venues", venueService.findAll());
@@ -108,6 +85,28 @@ public class EventsController {
 		eventService.deleteById(eventId);
 		redirectAttrs.addFlashAttribute("ok_message", "Event deleted.");
 		return "redirect:/events";
+	}
+	
+	@GetMapping("updateEvent/{id}")
+	public String getEventById(@PathVariable("id") long id, Model model) {
+		Optional<Event> event = eventService.findEventById(id);
+		
+		if (event.isEmpty()) {
+			// If the event does not exist (null),
+			// redirect to events page.
+			
+			return "redirect:/events";
+		}
+		
+		model.addAttribute("event", event.get());
+		
+		// Add all available venues as model attributes so that
+		// the user will be able to edit the venue attribute too.
+		model.addAttribute("venues", venueService.findAll());
+		
+		// With all that information fetched, redirect
+		// to updateEvent page and do the changes.
+		return "events/updateEvent";
 	}
 	
 	@PostMapping(consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE, value="updateEvent")
