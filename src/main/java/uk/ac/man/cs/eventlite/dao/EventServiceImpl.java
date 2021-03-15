@@ -65,7 +65,7 @@ public class EventServiceImpl implements EventService {
 		
 		Object[] results = new Object[keywords.length];
 		for (int i = 0; i < keywords.length; i++) {
-			results[i] = findAllFromSearch(keywords[i]);
+			results[i] = findAllSingleKeyword(keywords[i]);
 		}
 		ArrayList<Event> returnList = new ArrayList<Event>();
 		Iterator<Event> iterator =((Iterable<Event>) results[0]).iterator();
