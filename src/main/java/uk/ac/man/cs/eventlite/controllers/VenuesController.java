@@ -6,6 +6,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 import uk.ac.man.cs.eventlite.dao.VenueService;
 
 @Controller
@@ -15,8 +17,12 @@ public class VenuesController {
 	private VenueService venueService;
 
 	@GetMapping
-	public String getAllVenues(Model model) {
-		model.addAttribute("venues", venueService.findAll());
+	public String getAllVenues(@RequestParam(value = "name", required = false) String name, Model model) {
+		if (name == null) {
+			model.addAttribute("venues", venueService.findAll());
+		} else {
+			//model.addAttribute("venues", venueService.findAllFromSearch(name));
+		}
 		return "venues/index";
 	}
 }
