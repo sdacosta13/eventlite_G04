@@ -14,6 +14,7 @@ public interface EventService {
 	public Iterable<Event> findAllFromSearch(String name);
 	public Iterable<Event> findAllSingleKeyword(String name);
 	public Iterable<Event> findAllMultipleKeywords(String name);
+	public Iterable<Event> findAllMultipleKeywordsUsingRegex(String name);
 	public Event findById(long id);
 
 	public void save(Event entity);

@@ -55,7 +55,7 @@ public class EventServiceImpl implements EventService {
 	
 	@Override	
 	public Iterable<Event> findAllFromSearch(String name) {
-		return findAllMultipleKeywords(name);
+		return findAllMultipleKeywordsUsingRegex(name);
 	}
 	
 	@Override
@@ -94,6 +94,34 @@ public class EventServiceImpl implements EventService {
 			}
 		}
 		return false;
+	}
+	
+	@Override
+	public Iterable<Event> findAllMultipleKeywordsUsingRegex(String name){
+		String[] keywords = name.split("\\s+");
+		if (keywords.length == 0) return new ArrayList<Event>();
+		
+		Iterable<Event> returnList = findAllSingleKeyword(keywords[0]);
+		for (int i = 1; i < keywords.length; i++) {
+			Iterator<Event> iterator = returnList.iterator();
+			while(iterator.hasNext()) {
+				Event e = iterator.next();
+				if (!findKeyword(e.getName(), keywords[i])) {
+					iterator.remove();
+				}
+			}
+		}
+		
+		return returnList;
+	}
+	
+	private boolean findKeyword(String str, String keyword) {
+		str = str.toUpperCase();
+		keyword = keyword.toUpperCase();
+		return str.matches("(.*) " + keyword + " (.*)") || 
+				str.matches("^" + keyword + " (.*)") || 
+				str.matches("(.*) " + keyword + "$") || 
+				str.matches("^" + keyword + "$");
 	}
 	
 	public Event findById(long id) {
