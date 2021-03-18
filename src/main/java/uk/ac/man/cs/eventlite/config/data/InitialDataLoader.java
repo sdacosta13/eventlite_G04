@@ -30,8 +30,7 @@ public class InitialDataLoader implements ApplicationListener<ContextRefreshedEv
 
 	@Override
 	public void onApplicationEvent(ContextRefreshedEvent event) {
-
-		if (eventService.count() > 0 && venueService.count() > 0) {
+		if (eventService.count() > 0 || venueService.count() > 0) {
 			log.info("Database already populated. Skipping data initialization.");
 			return;
 		}
@@ -40,18 +39,24 @@ public class InitialDataLoader implements ApplicationListener<ContextRefreshedEv
 		
 		Venue venue1 = new Venue();
 		venue1.setName("Kilburn, G23");
+		venue1.setAddress("The University of Manchester\nOxford Rd\nManchester");
+		venue1.setPostcode("M13 9PL");
 		venue1.setCapacity(100);
 		
 		venueService.save(venue1);
 		
 		Venue venue2 = new Venue();
 		venue2.setName("Online");
+		venue2.setAddress("zoom.us");
+		venue2.setPostcode("AAA 777");
 		venue2.setCapacity(100000);
 		
 		venueService.save(venue2);
 		
 		Venue venue3 = new Venue();
 		venue3.setName("NASA");
+		venue3.setAddress("300 Hidden Figures Way SW Washington D.C.");
+		venue3.setPostcode("20546-0001");
 		venue3.setCapacity(500);
 		
 		venueService.save(venue3);
