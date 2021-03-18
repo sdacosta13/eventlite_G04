@@ -30,6 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
@@ -39,9 +40,8 @@ import uk.ac.man.cs.eventlite.entities.Event;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = EventLite.class)
-@DirtiesContext
+//@DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
 @ActiveProfiles("test")
-// @Disabled
 public class EventServiceTest extends AbstractTransactionalJUnit4SpringContextTests {
 	
 	@InjectMocks

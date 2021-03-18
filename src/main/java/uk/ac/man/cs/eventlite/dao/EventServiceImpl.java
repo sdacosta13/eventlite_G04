@@ -4,7 +4,6 @@ package uk.ac.man.cs.eventlite.dao;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Optional;
 
 import org.slf4j.Logger;
