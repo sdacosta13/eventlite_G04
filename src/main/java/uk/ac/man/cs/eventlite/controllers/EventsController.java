@@ -43,7 +43,7 @@ public class EventsController {
 		if (name == null) {
 			result = eventService.findAll();
 		} else {
-			result = eventService.findAllByNameContaining(name);
+			result = eventService.findAllFromSearch(name);
 		}
 
 		List<Event> pastEvents = new ArrayList<>();
