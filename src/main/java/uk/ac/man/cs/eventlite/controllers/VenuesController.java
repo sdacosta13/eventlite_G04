@@ -21,7 +21,7 @@ public class VenuesController {
 		if (name == null) {
 			model.addAttribute("venues", venueService.findAll());
 		} else {
-			//model.addAttribute("venues", venueService.findAllFromSearch(name));
+			model.addAttribute("venues", venueService.findAllFromSearch(name));
 		}
 		return "venues/index";
 	}
