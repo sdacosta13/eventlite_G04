@@ -1,7 +1,6 @@
 package uk.ac.man.cs.eventlite.entities;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 import org.springframework.format.annotation.DateTimeFormat;
@@ -14,6 +13,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.Future;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "events")
@@ -25,17 +28,23 @@ public class Event {
 
 	@JsonFormat(shape = JsonFormat.Shape.STRING)
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	@Future(message = "Date must be in the future.")
+	@NotNull(message = "Date is required.")
 	private LocalDate date;
 
 	@JsonFormat(shape = JsonFormat.Shape.STRING)
 	@DateTimeFormat(pattern = "HH:mm")
 	private LocalTime time;
 
+	@NotEmpty(message = "Event must have a name.")
+	@Size(max = 255, message = "Name must not be longer than 255 characters.")
 	private String name;
 	
 	@ManyToOne
+	@NotNull(message = "Event venue must be specified.")
 	private Venue venue;
 	
+	@Size(max = 499, message = "Description must be less than 500 characters long.")
 	private String description;
 
 	public Event() {
@@ -90,6 +99,6 @@ public class Event {
 	}
 	
 	public boolean isPast() {
-		return LocalDateTime.of(this.date, this.time).isBefore(LocalDateTime.now());
+		return (this.date).isBefore(LocalDate.now());
 	}
 }

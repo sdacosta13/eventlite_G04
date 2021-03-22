@@ -43,7 +43,7 @@
         <label for="date">Event date: </label>
         <input class="form-control" type="date" name="date" id="date" th:field="${event.date}" autofocus="autofocus" required />
 
-        <p class="text-danger" th:if="${#fields.hasErrors('date')}" th:errors="*{date}">errors</p>
+        <span class="text-danger" th:if="${#fields.hasErrors('date')}" th:errors="*{date}">errors</span>
       </div><br>
 
       <div class="form-group" th:classappend="${#fields.hasErrors('time')}? has-error">
