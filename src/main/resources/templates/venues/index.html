@@ -24,6 +24,7 @@
               <th><i class="fas fa-map-marked-alt"></i> Address</th>
               <th><i class="fas fa-city"></i> Postcode</th>
               <th><i class="fas fa-warehouse"></i> Capacity</th>
+              <th sec:authorize="isAuthenticated()"></th>
           </tr>
           </thead>
           <tbody>
@@ -32,6 +33,11 @@
               <td th:text="${v.address}">Venue address</td>
               <td th:text="${v.postcode}">Venue postcode</td>
               <td th:text="${v.capacity}">Venue capacity</td>
+              <td sec:authorize="isAuthenticated()">
+                  <form th:action="@{/venues/updateVenue/{venueId}(venueId=${v.id})}" method="get">
+                      <button type="submit" class="btn btn-info btn-sm">Update</button>
+                  </form>
+              </td>
           </tr>
         </tbody>
       </table>
