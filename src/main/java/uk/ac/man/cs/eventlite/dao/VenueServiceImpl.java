@@ -2,6 +2,7 @@ package uk.ac.man.cs.eventlite.dao;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,12 @@ public class VenueServiceImpl implements VenueService {
 	public Iterable<Venue> findAll() {
 		return venueRepository.findAll();
 	}
+	
+	@Override
+	public Optional<Venue> findVenueById(long id) {
+		return venueRepository.findById(id);
+	}
+	
 	@Override
 	public Iterable<Venue> findAllContainingAlternativeIgnoreCaseOrderByNameAsc(String prefix, String suffix, String infix, String full){
 		return venueRepository.findAllContainingAlternativeIgnoreCaseOrderByNameAsc(prefix, suffix, infix, full);
