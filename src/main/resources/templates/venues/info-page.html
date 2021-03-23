@@ -1,0 +1,62 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layouts/default}">
+<head>
+  <title>Venue Information</title>
+</head>
+<body> 
+  <div layout:fragment="content">
+    <h1 class="mb-2">Venue information</h1>
+    <table class="table table-striped table-hover">
+      <tbody>
+        <tr >
+            <th><i class="fas fa-bolt"></i>Name</th>
+            <td th:text="${venue.name}"> My Venue </td>
+        </tr>
+        <tr >
+            <th><i class="fas fa-map-marked-alt"></i>Address</th>
+            <td th:text="${venue.address}">Venue address</td>
+        </tr>
+        <tr >
+            <th><i class="fas fa-city"></i>Postcode</th>
+            <td th:text="${venue.postcode}">Venue postcode</td>
+        </tr>
+        <tr >
+            <th><i class="fas fa-warehouse"></i>Capacity</th>        
+            <td th:text="${venue.capacity}">Venue capacity</td>
+        </tr>
+      </tbody>
+    </table>
+    
+    
+    <h2 class="mb-2">Events for this venue:</h2>
+    <table class="table table-striped table-hover">
+      <thead>
+          <tr>
+              <th><i class="fas fa-bolt"></i> Event</th>
+              <th><i class="fas fa-map-marker-alt"></i> Venue</th>
+              <th><i class="fas fa-calendar"></i> Date</th>
+              <th><i class="fas fa-clock"></i> Time</th>
+              <th sec:authorize="isAuthenticated()"></th>
+          </tr>
+      </thead>
+      <tbody>
+          <tr th:each="e : ${events}" >
+              <td><a th:href="'event/' + ${e.id}" th:text="${e.name}"> My Event </a></td>
+              <td th:text="${e.venue.name}">Event venue</td>
+              <td th:text="${{e.date}}">Event date</td>
+              <td th:text="${{e.time}}">Event time</td>
+              <td sec:authorize="isAuthenticated()">
+                  <form th:action="@{/events/updateEvent/{eventId}(eventId=${e.id})}" method="get">
+                      <button type="submit" class="btn btn-info btn-sm">Update</button>
+                  </form>
+              </td>
+          </tr>
+      </tbody>
+    </table>	
+  </div>
+
+</body>
+</html>

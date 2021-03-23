@@ -3,6 +3,7 @@ package uk.ac.man.cs.eventlite.dao;
 import java.util.Optional;
 
 import uk.ac.man.cs.eventlite.entities.Event;
+import uk.ac.man.cs.eventlite.entities.Venue;
 
 public interface EventService {
 
@@ -15,6 +16,9 @@ public interface EventService {
 	public Iterable<Event> findAllSingleKeyword(String name);
 	public Iterable<Event> findAllMultipleKeywords(String name);
 	public Iterable<Event> findAllMultipleKeywordsUsingRegex(String name);
+	
+	public Iterable<Event> findEventsAtVenue(Venue venue);
+	
 	public Event findById(long id);
 
 	public void save(Event entity);
