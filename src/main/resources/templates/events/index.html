@@ -37,7 +37,7 @@
       <tbody>
         <tr th:each="e : ${futureEvents}">
           <td><a th:href="'event/' + ${e.id}" th:text="${e.name}"> My Event </a></td>
-          <td th:text="${e.venue.name}">Event venue</td>
+          <td><a th:href="'venue/' + ${e.venue.id}" th:text="${e.venue.name}">Event venue</a></td>
           <td th:text="${{e.date}}">Event date</td>
           <td th:text="${{e.time}}">Event time</td>
           <td sec:authorize="isAuthenticated()">
@@ -63,7 +63,7 @@
           <tbody>
           <tr th:each="e : ${pastEvents}" >
               <td><a th:href="'event/' + ${e.id}" th:text="${e.name}"> My Event </a></td>
-              <td th:text="${e.venue.name}">Event venue</td>
+              <td><a th:href="'venue/' + ${e.venue.id}" th:text="${e.venue.name}">Event venue</a></td>
               <td th:text="${{e.date}}">Event date</td>
               <td th:text="${{e.time}}">Event time</td>
               <td sec:authorize="isAuthenticated()">
