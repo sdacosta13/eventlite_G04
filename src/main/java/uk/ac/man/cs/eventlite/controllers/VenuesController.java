@@ -63,4 +63,14 @@ public class VenuesController {
 		
 		return "redirect:/venues";
 	}
+	@GetMapping(value="/addVenue")
+	public String addVenuePage(Model model) {
+		model.addAttribute("venue", new Venue());
+		return "venues/addVenue";
+	}
+	@PostMapping(value="/venueSubmit")
+	public String venueSubmit(@ModelAttribute Venue venue) {
+		venueService.save(venue);
+		return "redirect:/events";
+	}
 }
