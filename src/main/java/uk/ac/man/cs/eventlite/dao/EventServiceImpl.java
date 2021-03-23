@@ -17,6 +17,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import uk.ac.man.cs.eventlite.entities.Event;
+import uk.ac.man.cs.eventlite.entities.Venue;
 
 @Service
 public class EventServiceImpl implements EventService {
@@ -141,5 +142,10 @@ public class EventServiceImpl implements EventService {
 	@Override
 	public Optional<Event> findEventById(long id) {
 		return eventRepository.findEventById(id);
+	}
+
+	@Override
+	public Iterable<Event> findEventsAtVenue(Venue venue) {
+		return eventRepository.findEventsAtVenue(venue);
 	}
 }
