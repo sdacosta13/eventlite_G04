@@ -9,16 +9,12 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import uk.ac.man.cs.eventlite.dao.EventService;
 import uk.ac.man.cs.eventlite.dao.VenueService;
+import uk.ac.man.cs.eventlite.entities.Event;
 import uk.ac.man.cs.eventlite.entities.Venue;
 
 @Controller
@@ -26,6 +22,9 @@ import uk.ac.man.cs.eventlite.entities.Venue;
 public class VenuesController {
 	@Autowired
 	private VenueService venueService;
+
+	@Autowired
+	private EventService eventService;
 
 	@GetMapping
 	public String getAllVenues(@RequestParam(value = "name", required = false) String name, Model model) {
@@ -72,5 +71,29 @@ public class VenuesController {
 	public String venueSubmit(@ModelAttribute Venue venue) {
 		venueService.save(venue);
 		return "redirect:/events";
+	}
+
+	@DeleteMapping("/{id}")
+	public String deleteEvent(@PathVariable("id") long id, RedirectAttributes redirectAttrs) {
+		Optional<Venue> venue = venueService.findVenueById(id);
+
+		if (venue.isEmpty()) {
+			redirectAttrs.addFlashAttribute("error_message",
+					"Failed to delete venue. No venue by that id.");
+			return "redirect:/venues";
+		}
+
+		Iterable<Event> events = eventService.findAllByVenue(venue.get());
+		if (events.iterator().hasNext()) {
+			redirectAttrs.addFlashAttribute("error_message",
+					"Failed to delete venue. Can not delete a venue with events.");
+			return "redirect:/venue/" + id;
+		}
+
+		venueService.deleteById(venue.get().getId());
+
+		redirectAttrs.addFlashAttribute("ok_message",
+				"Successfully deleted venue.");
+		return "redirect:/venues";
 	}
 }
