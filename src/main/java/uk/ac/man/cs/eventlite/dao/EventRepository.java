@@ -15,6 +15,8 @@ public interface EventRepository extends CrudRepository<Event, Long> {
 	public Iterable<Event> findAllByNameContainingIgnoreCaseOrderByDateAscTimeAsc(String infix);
 	public Iterable<Event> findAllByNameContainingIgnoreCaseOrderByNameAscDateAsc(String infix);
 	
+	public Iterable<Event> findAllByVenue(Venue venue);
+
 	@Query("SELECT e FROM Event e where UPPER(e.name) like UPPER(?1) or UPPER(e.name) like UPPER(?2) or UPPER(e.name) like UPPER(?3) or UPPER(e.name) like UPPER(?4) ORDER BY e.name ASC, e.date ASC")
 	public Iterable<Event> findAllContainingAlternativeIgnoreCaseOrderByNameAscDateAsc(String prefix, String suffix, String infix, String full);
 	

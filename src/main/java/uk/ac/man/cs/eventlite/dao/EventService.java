@@ -11,6 +11,7 @@ public interface EventService {
 
 	public Iterable<Event> findAll();
 	public Iterable<Event> findAllByNameContaining(String infix);
+	public Iterable<Event> findAllByVenue(Venue venue);
 	public Iterable<Event> findAllContainingAlternativeIgnoreCaseOrderByNameAscDateAsc(String prefix, String suffix, String infix, String full);
 	public Iterable<Event> findAllFromSearch(String name);
 	public Iterable<Event> findAllSingleKeyword(String name);
