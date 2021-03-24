@@ -55,7 +55,11 @@
               </td>
           </tr>
       </tbody>
-    </table>	
+    </table>
+
+    <form th:action="@{/venues/{id}(id=${venue.id})}" th:method="delete" sec:authorize="isAuthenticated()">
+      <button type="submit" class="btn btn-danger"><i class="fas fa-trash" aria-hidden="true"></i>Delete</button>
+    </form>
   </div>
 
 </body>
