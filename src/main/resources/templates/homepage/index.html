@@ -1,0 +1,31 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layouts/default}">
+<head>
+  <title>EventLite Home</title>
+</head>
+
+<body>
+  <div layout:fragment="content">
+    <h1>EventLite</h1>
+    <div class="row" >
+    	<div class="col-md-6 align-self-center">
+    		<h2>Discover new events</h2>
+    		<button class="btn btn-primary" type="button" onclick="window.location.href='/events'">Browse events</button>
+    	</div>
+    	
+    	<div class="col-md-6">
+    		<img class=".img-responsive" style="width: inherit" src="../static/img/diagram_events.svg" th:src="@{img/diagram_events.svg}"/>
+		</div>
+    </div>
+    <h2>Upcoming Events</h2>
+    <h2>Most Popular Venues</h2>
+  </div>
+
+  <script type="text/javascript" src="/webjars/jquery/jquery.min.js"></script>
+  <script type="text/javascript" src="/webjars/popper.js/umd/popper.min.js"></script>
+  <script type="text/javascript" src="/webjars/bootstrap/js/bootstrap.min.js"></script>
+</body>
+</html>
