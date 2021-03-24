@@ -12,7 +12,7 @@
     <h1 th:text="${event.name}">Event Name</h1>
 
     <i th:text="${event.date} + ', ' + ${event.time}">Event Date and Time</i><br>
-    <a th:href="'venue/' + ${event.venue.id}" th:text="${event.venue.name}">Venue Name</a><br>
+    <a th:href="'/venue/' + ${event.venue.id}" th:text="${event.venue.name}">Venue Name</a><br>
     <p th:text="${event.description}">Event Description</p><br>
 
     <form th:action="@{/events/{id}(id=${event.id})}" th:method="delete" sec:authorize="isAuthenticated()">
