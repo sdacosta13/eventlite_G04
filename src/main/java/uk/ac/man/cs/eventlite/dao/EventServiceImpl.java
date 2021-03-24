@@ -2,6 +2,7 @@ package uk.ac.man.cs.eventlite.dao;
 
 
 import java.io.InputStream;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -146,6 +147,6 @@ public class EventServiceImpl implements EventService {
 
 	@Override
 	public Iterable<Event> findEventsAtVenue(Venue venue) {
-		return eventRepository.findEventsAtVenue(venue);
+		return eventRepository.findEventsAtVenue(venue, LocalDate.now());
 	}
 }
