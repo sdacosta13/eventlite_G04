@@ -1,5 +1,6 @@
 package uk.ac.man.cs.eventlite.dao;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.Query;
@@ -17,8 +18,8 @@ public interface EventRepository extends CrudRepository<Event, Long> {
 	@Query("SELECT e FROM Event e where UPPER(e.name) like UPPER(?1) or UPPER(e.name) like UPPER(?2) or UPPER(e.name) like UPPER(?3) or UPPER(e.name) like UPPER(?4) ORDER BY e.name ASC, e.date ASC")
 	public Iterable<Event> findAllContainingAlternativeIgnoreCaseOrderByNameAscDateAsc(String prefix, String suffix, String infix, String full);
 	
-	@Query("SELECT e FROM Event e where e.venue = ?1")
-	public Iterable<Event> findEventsAtVenue(Venue venue);
+	@Query("SELECT e FROM Event e where e.venue = ?1 and e.date >= ?2 ORDER BY e.date ASC, e.name ASC")
+	public Iterable<Event> findEventsAtVenue(Venue venue, LocalDate now);
 	
 	public Event findById(long id);
 	
