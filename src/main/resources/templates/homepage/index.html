@@ -39,7 +39,9 @@
     	<div class="card ml-2" style="width: 18rem;" th:each="v : ${popularVenues}">
 		  <div class="card-body">
 		  	<i th:text="${{v.venue.address}}">Venue Address</i>
-		    <h5 class="card-title text-primary" th:text="${v.venue.name}">Venue Name</h5>
+		    <h5 class="card-title text-primary">
+		    	<a th:text="${v.venue.name}" th:href="'venue/' + ${v.venue.id}">Venue Name</a>
+	    	</h5>
 		  	<p th:text="'Number of events: ' + ${{v.count}}">Count</p>
 		  </div>
 		</div>
