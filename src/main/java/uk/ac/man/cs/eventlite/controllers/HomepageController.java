@@ -41,7 +41,7 @@ public class HomepageController {
 	}
 	
 	@GetMapping
-	public String getAllVenues(Model model) {
+	public String getHomepage(Model model) {
 		Iterable<Event> events = eventService.findAll();
 		
 		// Should probably replace with getting top 3 results rather than processing all of them here
