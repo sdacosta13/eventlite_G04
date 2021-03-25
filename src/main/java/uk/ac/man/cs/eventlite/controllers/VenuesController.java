@@ -56,7 +56,11 @@ public class VenuesController {
 			model.addAttribute("venue", venue);
 			return "venues/updateVenue";
 		}
-		
+		if(!venue.setCoords()) {
+			redirectAttrs.addFlashAttribute("error_message",
+					"Failed to add venue. Can not find the address");
+			return "redirect:/venues/updateVenue/"+venue.getId();
+		}
 		venueService.save(venue);
 		redirectAttrs.addFlashAttribute("ok_message", "Venue updated successfuly.");
 		
@@ -68,7 +72,12 @@ public class VenuesController {
 		return "venues/addVenue";
 	}
 	@PostMapping(value="/venueSubmit")
-	public String venueSubmit(@ModelAttribute Venue venue) {
+	public String venueSubmit(@ModelAttribute Venue venue, RedirectAttributes redirectAttrs) {
+		if(!venue.setCoords()) {
+			redirectAttrs.addFlashAttribute("error_message",
+					"Failed to add venue. Can not find the address");
+			return "redirect:/venues/addVenue/";
+		}
 		venueService.save(venue);
 		return "redirect:/events";
 	}

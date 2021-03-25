@@ -1,5 +1,6 @@
 package uk.ac.man.cs.eventlite.config.data;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -10,6 +11,8 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
+
+import com.mapbox.api.geocoding.v5.MapboxGeocoding;
 
 import uk.ac.man.cs.eventlite.dao.EventService;
 import uk.ac.man.cs.eventlite.dao.VenueService;
@@ -35,7 +38,7 @@ public class InitialDataLoader implements ApplicationListener<ContextRefreshedEv
 			log.info("Database already populated. Skipping data initialization.");
 			return;
 		}
-
+		
 		// Build and save initial models here.
 		
 		Venue venue1 = new Venue();
@@ -43,7 +46,7 @@ public class InitialDataLoader implements ApplicationListener<ContextRefreshedEv
 		venue1.setAddress("The University of Manchester\nOxford Rd\nManchester");
 		venue1.setPostcode("M13 9PL");
 		venue1.setCapacity(100);
-		
+		venue1.setCoords();
 		venueService.save(venue1);
 		
 		Venue venue2 = new Venue();
@@ -51,7 +54,7 @@ public class InitialDataLoader implements ApplicationListener<ContextRefreshedEv
 		venue2.setAddress("zoom.us");
 		venue2.setPostcode("AAA 777");
 		venue2.setCapacity(100000);
-		
+		venue2.setCoords();
 		venueService.save(venue2);
 		
 		Venue venue3 = new Venue();
@@ -59,7 +62,7 @@ public class InitialDataLoader implements ApplicationListener<ContextRefreshedEv
 		venue3.setAddress("300 Hidden Figures Way SW Washington D.C.");
 		venue3.setPostcode("20546-0001");
 		venue3.setCapacity(500);
-		
+		venue3.setCoords();
 		venueService.save(venue3);
 		
 		Event event1 = new Event();
