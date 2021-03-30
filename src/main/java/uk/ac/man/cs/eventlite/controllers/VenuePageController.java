@@ -26,7 +26,7 @@ public class VenuePageController {
 	private EventService eventService;
 	
 	@GetMapping
-	public String getEventInfo(Model model, @PathVariable Long venueId) {
+	public String getVenueInfo(Model model, @PathVariable Long venueId) {
 		Optional<Venue> venueContainer = venueService.findVenueById(venueId);
 		if (!venueContainer.isPresent()) {
 			return "redirect:/venues";
