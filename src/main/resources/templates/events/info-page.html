@@ -5,6 +5,8 @@
       layout:decorate="~{layouts/default}">
 <head>
   <title>Event Information</title>
+  <script src='https://api.mapbox.com/mapbox-gl-js/v2.2.0/mapbox-gl.js'></script>
+  <link href='https://api.mapbox.com/mapbox-gl-js/v2.2.0/mapbox-gl.css' rel='stylesheet' />
 </head>
 <body>
   <div layout:fragment="content">
@@ -18,6 +20,23 @@
     <form th:action="@{/events/{id}(id=${event.id})}" th:method="delete" sec:authorize="isAuthenticated()">
       <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-trash" aria-hidden="true"></i> Delete</button>
     </form>
+    
+    <div id='map' style='width: 400px; height: 300px;'></div>
+	<script th:inline="javascript">
+		var lon = [[${event.venue.longitude}]];
+		var lat = [[${event.venue.latitude}]];
+		mapboxgl.accessToken = "pk.eyJ1Ijoic2RhY29zdGExMyIsImEiOiJja21wMm45bzIyYWhkMnBwZnQ1Yzg0Zm8xIn0.mbzmSCCHSGvuxW3_DCxJYg";
+		var map = new mapboxgl.Map({
+		container: 'map',
+		style: 'mapbox://styles/mapbox/streets-v11',
+		center: [lon, lat],
+		zoom: 14
+		});
+		
+		var marker1 = new mapboxgl.Marker()
+			.setLngLat([lon, lat])
+			.addTo(map);
+	</script>
   </div>
 
 </body>
