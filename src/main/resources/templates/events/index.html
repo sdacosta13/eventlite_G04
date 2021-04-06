@@ -103,6 +103,8 @@
               const coords = [venue.longitude, venue.latitude];
               new mapboxgl.Marker()
                   .setLngLat(coords)
+                  .setPopup(new mapboxgl.Popup({ offset: 25 })
+                      .setHTML('<h5>' + events[0].name + '</h5><p>' + events[0].time + '</p>'))
                   .addTo(map);
 
               bounds.push(coords);
