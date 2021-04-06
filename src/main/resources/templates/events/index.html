@@ -5,6 +5,8 @@
       layout:decorate="~{layouts/default}">
 <head>
   <title>All events</title>
+  <script src='https://api.mapbox.com/mapbox-gl-js/v2.2.0/mapbox-gl.js'></script>
+  <link href='https://api.mapbox.com/mapbox-gl-js/v2.2.0/mapbox-gl.css' rel='stylesheet' />
 </head>
 <body>
   <div layout:fragment="content">
@@ -74,6 +76,36 @@
           </tr>
         </tbody>
       </table>
+
+      <div id='map' style='height: 30rem;'></div>
+      <script th:inline="javascript">
+          const events = [[${futureEvents}]];
+
+          const venues = {};
+          for (const event of events) {
+              if (venues[event.venue.id]) {
+                  venues[event.venue.id].push(event);
+              } else {
+                  venues[event.venue.id] = [event];
+              }
+          }
+
+          mapboxgl.accessToken = "pk.eyJ1Ijoic2RhY29zdGExMyIsImEiOiJja21wMm45bzIyYWhkMnBwZnQ1Yzg0Zm8xIn0.mbzmSCCHSGvuxW3_DCxJYg";
+          const map = new mapboxgl.Map({
+              container: 'map',
+              style: 'mapbox://styles/mapbox/streets-v11',
+              center: [0, 0],
+              zoom: 1
+          });
+
+          for (const events of Object.values(venues)) {
+              const venue = events[0].venue;
+
+              new mapboxgl.Marker()
+                  .setLngLat([venue.longitude, venue.latitude])
+                  .addTo(map);
+          }
+      </script>
   </div>
 
 </body>
