@@ -21,23 +21,25 @@
       <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-trash" aria-hidden="true"></i> Delete</button>
     </form>
     
-    <div id='map' style='width: 400px; height: 300px;'></div>
-	<script th:inline="javascript">
-		var lon = [[${event.venue.longitude}]];
-		var lat = [[${event.venue.latitude}]];
-		mapboxgl.accessToken = "pk.eyJ1Ijoic2RhY29zdGExMyIsImEiOiJja21wMm45bzIyYWhkMnBwZnQ1Yzg0Zm8xIn0.mbzmSCCHSGvuxW3_DCxJYg";
-		var map = new mapboxgl.Map({
-		container: 'map',
-		style: 'mapbox://styles/mapbox/streets-v11',
-		center: [lon, lat],
-		zoom: 14
-		});
-		
-		var marker1 = new mapboxgl.Marker()
-			.setLngLat([lon, lat])
-			.addTo(map);
-	</script>
-  </div>
+    <div id='map' style='width: inherit; height: 300px;'></div>
+    	<script th:inline="javascript">
+    		var lon = [[${event.venue.longitude}]];
+    		var lat = [[${event.venue.latitude}]];
+    		mapboxgl.accessToken = "pk.eyJ1Ijoic2RhY29zdGExMyIsImEiOiJja21wMm45bzIyYWhkMnBwZnQ1Yzg0Zm8xIn0.mbzmSCCHSGvuxW3_DCxJYg";
+    		var map = new mapboxgl.Map({
+    		container: 'map',
+    		style: 'mapbox://styles/mapbox/streets-v11',
+    		center: [lon, lat],
+    		zoom: 14
+    		});
+    		
+    		var marker1 = new mapboxgl.Marker()
+    			.setLngLat([lon, lat])
+          .setPopup(new mapboxgl.Popup({ offset: 25 }) // add popups
+            .setHTML('<h5>' + [[${event.name}]] + '</h5><p>' + [[${event.time}]] + '</p>'))
+    			.addTo(map);
+    	</script>
+    </div>
 
 </body>
 </html>
