@@ -93,18 +93,22 @@
           mapboxgl.accessToken = "pk.eyJ1Ijoic2RhY29zdGExMyIsImEiOiJja21wMm45bzIyYWhkMnBwZnQ1Yzg0Zm8xIn0.mbzmSCCHSGvuxW3_DCxJYg";
           const map = new mapboxgl.Map({
               container: 'map',
-              style: 'mapbox://styles/mapbox/streets-v11',
-              center: [0, 0],
-              zoom: 1
+              style: 'mapbox://styles/mapbox/streets-v11'
           });
 
+          const bounds = [];
           for (const events of Object.values(venues)) {
               const venue = events[0].venue;
 
+              const coords = [venue.longitude, venue.latitude];
               new mapboxgl.Marker()
-                  .setLngLat([venue.longitude, venue.latitude])
+                  .setLngLat(coords)
                   .addTo(map);
+
+              bounds.push(coords);
           }
+
+          map.fitBounds(bounds, { padding: 50 });
       </script>
   </div>
 
