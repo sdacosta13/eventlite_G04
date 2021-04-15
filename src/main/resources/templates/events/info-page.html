@@ -21,6 +21,13 @@
       <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-trash" aria-hidden="true"></i> Delete</button>
     </form>
     
+    <h2>Share the event!</h2>
+    
+    <form th:action="@{{id}/tweetSubmit(id=${event.id})}" th:object="${message}" method="post">
+    	<input class="form-control" type="text" th:field="${message}" id="message" name="message" maxlength="280" placeholder="Message here!" required>
+    	<button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+    
     <div id='map' style='width: inherit; height: 300px;'></div>
     	<script th:inline="javascript">
     		var lon = [[${event.venue.longitude}]];
