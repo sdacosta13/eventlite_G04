@@ -33,16 +33,12 @@ public class EventPageController {
 	@GetMapping
 	public String getEventInfo(Model model, @PathVariable Long eventId) {
 		model.addAttribute("event", eventService.findById(eventId));
-		model.addAttribute("message", "");
 		return "events/info-page";
 	}
 	
 	@PostMapping(value="/tweetSubmit")
-	public String tweetSubmit(@RequestBody @Valid @ModelAttribute String message, RedirectAttributes redirectAttrs) {
+	public String tweetSubmit(@RequestBody @Valid @ModelAttribute("message") String message, RedirectAttributes redirectAttrs) {
 		try {
-//			message = "Test Message";
-			System.out.println("Print debuggingaaaaaaaaaaaaaaaaaaaaaaa");
-			System.out.println(message);
 			twitterService.getTwitter().updateStatus(message);
 			redirectAttrs.addFlashAttribute("ok_message", String.format("Your tweet: '%s' was posted", message));
 			
