@@ -1,9 +1,12 @@
 package uk.ac.man.cs.eventlite.dao;
 
+import org.springframework.stereotype.Service;
+
 import twitter4j.Twitter;
 import twitter4j.TwitterFactory;
 import twitter4j.conf.ConfigurationBuilder;
 
+@Service
 public class TwitterService {
 	private static final String CONSUMER_KEY_SECRET = "GFAKktZnJ5yELhNjceyzbN9qIDYgmBUG08nF4Kh9JS7BNZ8O9H";
 	private static final String CONSUMER_KEY = "O0uL2umfLrg4XB0ug3634ErGo";
