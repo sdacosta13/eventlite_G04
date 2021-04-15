@@ -1,4 +1,4 @@
-package uk.ac.man.cs.eventlite.twitter;
+package uk.ac.man.cs.eventlite.services;
 
 import org.springframework.stereotype.Service;
 
