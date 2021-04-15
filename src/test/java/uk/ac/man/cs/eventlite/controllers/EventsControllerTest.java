@@ -18,6 +18,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 
+import java.time.LocalDate;
 import java.util.Collections;
 
 import org.junit.jupiter.api.Test;
@@ -72,9 +73,13 @@ public class EventsControllerTest {
 
 	@Test
 	public void getIndexWithEvents() throws Exception {
-		when(venue.getName()).thenReturn("Kilburn Building");
+		Venue venue = new Venue();
+		venue.setName("Kilburn Building");
 
-		when(event.getVenue()).thenReturn(venue);
+		Event event = new Event();
+		event.setVenue(venue);
+		event.setDate(LocalDate.now());
+
 		when(eventService.findAll()).thenReturn(Collections.<Event>singletonList(event));
 
 		mvc.perform(get("/events").accept(MediaType.TEXT_HTML)).andExpect(status().isOk())
