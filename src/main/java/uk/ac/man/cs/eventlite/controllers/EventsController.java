@@ -1,7 +1,7 @@
 package uk.ac.man.cs.eventlite.controllers;
 
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,9 +22,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import twitter4j.Status;
+import twitter4j.TwitterException;
 import uk.ac.man.cs.eventlite.dao.EventService;
 import uk.ac.man.cs.eventlite.dao.VenueService;
 import uk.ac.man.cs.eventlite.entities.Event;
+import uk.ac.man.cs.eventlite.services.TwitterService;
 
 @Controller
 @RequestMapping(value = "/events", produces = { MediaType.TEXT_HTML_VALUE })
@@ -35,6 +38,9 @@ public class EventsController {
 	
 	@Autowired
 	private VenueService venueService;
+	
+	@Autowired
+	private TwitterService twitterService;
 
 	@GetMapping
 	public String getAllEvents(@RequestParam(value = "name", required = false) String name, Model model) {
@@ -58,11 +64,19 @@ public class EventsController {
 
 		model.addAttribute("pastEvents", pastEvents);
 		model.addAttribute("futureEvents", futureEvents);
+		
+		List<Status> mostRecentTweets;
+		
+		try {
+			mostRecentTweets = twitterService.getTimeLine(5);
+		} catch (TwitterException e) {
+			mostRecentTweets = Collections.emptyList();
+		}
+		
+		model.addAttribute("mostRecentTweets", mostRecentTweets);
 
 		return "events/index";
 	}
-	
-	
 
 	@GetMapping(value="/addEvent")
 	public String getEventAdder(Model model) {

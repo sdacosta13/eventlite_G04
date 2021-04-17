@@ -77,6 +77,22 @@
         </tbody>
       </table>
 
+      <h2 class="mb-2">Twitter timeline: </h2>
+      <table class="table table-striped table-hover">
+        <thead>
+          <tr>
+            <th><i class="fas-calendar"></i> Date </th>
+            <th> Link </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:each="t : ${mostRecentTweets}" >
+            <td th:text="${{t.createdAt}}">Date</td>
+            <td ><a th:text="${{t.text}}" th:href="'https://twitter.com/' + ${t.user.name} + '/status/' + ${t.id}">Text</a></td>
+          </tr>
+        </tbody>
+      </table>
+
       <div id='map' style='height: 30rem;'></div>
       <script th:inline="javascript">
           const events = [[${futureEvents}]];
