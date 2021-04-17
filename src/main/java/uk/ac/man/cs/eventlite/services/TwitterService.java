@@ -1,8 +1,13 @@
 package uk.ac.man.cs.eventlite.services;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.stereotype.Service;
 
+import twitter4j.Status;
 import twitter4j.Twitter;
+import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import twitter4j.conf.ConfigurationBuilder;
 
@@ -28,5 +33,11 @@ public class TwitterService {
 	
 	public Twitter getTwitter() {
 		return twitter;
+	}
+	
+	public List<Status> getTimeLine(int count) throws TwitterException {
+		return twitter.getHomeTimeline().stream()
+			      .limit(count)
+			      .collect(Collectors.toList());
 	}
 }
