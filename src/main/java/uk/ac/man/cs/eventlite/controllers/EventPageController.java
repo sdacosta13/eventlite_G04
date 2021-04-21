@@ -1,5 +1,6 @@
 package uk.ac.man.cs.eventlite.controllers;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,18 +38,13 @@ public class EventPageController {
 	}
 	
 	@PostMapping(value="/tweetSubmit")
-	public String tweetSubmit(@RequestBody @Valid @ModelAttribute("message") String message, RedirectAttributes redirectAttrs) {
-		try {
-			twitterService.getTwitter().updateStatus(message);
+	public String tweetSubmit(@RequestBody @Valid @ModelAttribute("message") String message, RedirectAttributes redirectAttrs, HttpServletRequest request) {
+		if (twitterService.postTweet(message)) {
 			redirectAttrs.addFlashAttribute("ok_message", String.format("Your tweet: '%s' was posted", message));
-			
-		} catch (TwitterException e) {
+		} else {
 			redirectAttrs.addFlashAttribute("error_message", "Twitter is not available.");
-			e.printStackTrace();
-		}
-		
-		return "redirect:/events";
-		
+		}	
+		return "redirect:" + request.getHeader("Referer");	
 	}
 
 }

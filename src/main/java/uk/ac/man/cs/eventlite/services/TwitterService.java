@@ -3,6 +3,7 @@ package uk.ac.man.cs.eventlite.services;
 import org.springframework.stereotype.Service;
 
 import twitter4j.Twitter;
+import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import twitter4j.conf.ConfigurationBuilder;
 
@@ -28,5 +29,15 @@ public class TwitterService {
 	
 	public Twitter getTwitter() {
 		return twitter;
+	}
+	
+	public boolean postTweet(String tweet) {
+		try {
+			twitter.updateStatus(tweet);
+			return true;
+		} catch (TwitterException e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 }
