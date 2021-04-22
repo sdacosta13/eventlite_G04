@@ -51,6 +51,20 @@ public class EventServiceImpl implements EventService {
 	}
 	
 	@Override
+	public Iterable<Event> nextEvents(Optional<Venue> venue, long amount) {
+		ArrayList<Event> returnList = new ArrayList<Event>();
+		if (venue.isEmpty()) { return returnList; }
+		Iterable<Event> upcomingEvents = eventRepository.findEventsAtVenue(venue.get(), LocalDate.now());
+		Iterator<Event> iterator = ((Iterable<Event>) upcomingEvents).iterator();
+		long i = 0;
+		while ((iterator.hasNext()) && (i < amount)) {
+			returnList.add(iterator.next());
+			i++;
+		}
+		return returnList;
+	}
+	
+	@Override
 	public Iterable<Event> findAllContainingAlternativeIgnoreCaseOrderByNameAscDateAsc(String prefix, String suffix, String infix, String full) {
 		return eventRepository.findAllContainingAlternativeIgnoreCaseOrderByNameAscDateAsc(prefix, suffix, infix, full);
 	}

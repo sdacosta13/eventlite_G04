@@ -13,6 +13,7 @@ import uk.ac.man.cs.eventlite.dao.VenueService;
 import uk.ac.man.cs.eventlite.entities.Event;
 import uk.ac.man.cs.eventlite.entities.Venue;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -30,6 +31,17 @@ public class VenuesControllerApi {
 	@GetMapping
 	public CollectionModel<Venue> getAllVenues() {
 		return venueCollection(venueService.findAll());
+	}
+	
+	@GetMapping("/{venueId}/next3events")
+	public CollectionModel<Event> getNextThreeEvents(@PathVariable long venueId) {
+		return eventCollectionForVenue(eventService.nextEvents(venueService.findVenueById(venueId), 3), venueId);
+	}
+	
+	private CollectionModel<Event> eventCollectionForVenue(Iterable<Event> events, long venueId) {
+		Link selfLink = linkTo(methodOn(VenuesControllerApi.class).getNextThreeEvents(venueId)).withSelfRel();
+
+		return CollectionModel.of(events, selfLink);
 	}
 
 	private CollectionModel<Venue> venueCollection(Iterable<Venue> venues) {

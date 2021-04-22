@@ -27,4 +27,6 @@ public interface EventService {
 	public void deleteById(long id);
 	
 	public Optional<Event> findEventById(long id);
+
+	public Iterable<Event> nextEvents(Optional<Venue> venue, long amount);
 }
