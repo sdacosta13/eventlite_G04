@@ -38,6 +38,7 @@ import uk.ac.man.cs.eventlite.dao.EventService;
 import uk.ac.man.cs.eventlite.dao.VenueService;
 import uk.ac.man.cs.eventlite.entities.Event;
 import uk.ac.man.cs.eventlite.entities.Venue;
+import uk.ac.man.cs.eventlite.services.TwitterService;
 
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(EventsController.class)
@@ -58,6 +59,9 @@ public class EventsControllerTest {
 
 	@MockBean
 	private VenueService venueService;
+	
+	@MockBean
+	private TwitterService twitterService;
 
 	@Test
 	public void getIndexWhenNoEvents() throws Exception {
@@ -69,6 +73,7 @@ public class EventsControllerTest {
 		verify(eventService).findAll();
 		verifyNoInteractions(event);
 		verifyNoInteractions(venue);
+		verify(twitterService).getTimeLine(5);
 	}
 
 	@Test
@@ -86,6 +91,7 @@ public class EventsControllerTest {
 				.andExpect(view().name("events/index")).andExpect(handler().methodName("getAllEvents"));
 
 		verify(eventService).findAll();
+		verify(twitterService).getTimeLine(5);
 	}
 
 	@Test
