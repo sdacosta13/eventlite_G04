@@ -23,6 +23,7 @@ import uk.ac.man.cs.eventlite.dao.EventService;
 import uk.ac.man.cs.eventlite.dao.VenueService;
 import uk.ac.man.cs.eventlite.entities.Event;
 import uk.ac.man.cs.eventlite.entities.Venue;
+import uk.ac.man.cs.eventlite.services.TwitterService;
 
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(EventPageController.class)
@@ -43,6 +44,9 @@ public class EventPageControllerTest {
 
 	@MockBean
 	private VenueService venueService;
+	
+	@MockBean
+	private TwitterService twitterService;
 
 	@Test
 	public void getPageWhenEventExists() throws Exception {
