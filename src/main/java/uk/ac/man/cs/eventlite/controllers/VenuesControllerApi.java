@@ -2,8 +2,10 @@ package uk.ac.man.cs.eventlite.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.MediaTypes;
+import org.springframework.hateoas.server.LinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -36,6 +38,25 @@ public class VenuesControllerApi {
 		Link selfLink = linkTo(methodOn(VenuesControllerApi.class).getAllVenues()).withSelfRel();
 
 		return CollectionModel.of(venues, selfLink);
+	}
+
+	@GetMapping("/{id}")
+	public ResponseEntity<EntityModel<Venue>> getVenue(@PathVariable("id") long id) {
+		Optional<Venue> venue = venueService.findVenueById(id);
+		if (venue.isEmpty()) {
+			return ResponseEntity.noContent().build();
+		}
+
+		LinkBuilder builder = linkTo(VenuesControllerApi.class).slash(id);
+		Link selfLink = builder.withSelfRel();
+		Link venueLink = builder.withRel("venue");
+		Link eventsLink = builder.slash("events").withRel("events");
+		Link next3EventsLink = builder.slash("next3events").withRel("next3events");
+
+		EntityModel<Venue> model = EntityModel.of(venue.get())
+				.add(selfLink, venueLink, eventsLink, next3EventsLink);
+
+		return ResponseEntity.ok(model);
 	}
 
 	@DeleteMapping("/{id}")
