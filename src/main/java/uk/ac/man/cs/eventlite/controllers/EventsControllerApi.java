@@ -9,6 +9,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uk.ac.man.cs.eventlite.dao.EventService;
+import uk.ac.man.cs.eventlite.entities.APIEvent;
 import uk.ac.man.cs.eventlite.entities.Event;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -26,6 +27,11 @@ public class EventsControllerApi {
 
 		return eventCollection(eventService.findAll());
 	}
+	
+	@GetMapping("/{id}")
+	public EntityModel<APIEvent> getEventJson(@PathVariable("id") long id) {
+		return singleEvent(eventService.findById(id));
+	}
 
 	@DeleteMapping("/{eventId}")
 	public ResponseEntity<?> deleteEvent(@PathVariable long eventId) {
@@ -33,10 +39,12 @@ public class EventsControllerApi {
 		return ResponseEntity.noContent().build();
 	}
 
-	private EntityModel<Event> singleEvent(Event event) {
+	private EntityModel<APIEvent> singleEvent(Event event) {
 		Link selfLink = linkTo(EventsControllerApi.class).slash(event.getId()).withSelfRel();
-
-		return EntityModel.of(event, selfLink);
+		Link eventLink = linkTo(EventsControllerApi.class).slash(event.getId()).withRel("event");
+		Link venueLink = linkTo(EventsControllerApi.class).slash(event.getId()).slash("venue").withRel("venue");
+		
+		return EntityModel.of(new APIEvent(event), selfLink, eventLink, venueLink);
 	}
 
 	private CollectionModel<Event> eventCollection(Iterable<Event> events) {
