@@ -12,6 +12,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Collections;
 
 import org.junit.jupiter.api.Test;
@@ -72,6 +73,41 @@ public class EventsControllerApiTest {
 				.andExpect(jsonPath("$._links.self.href", endsWith("/api/events")))
 				.andExpect(jsonPath("$._embedded.events.length()", equalTo(1)));
 
+		verify(eventService).findAll();
+	}
+	@Test
+	public void getEventListTest() throws Exception{
+		Venue venue1 = new Venue();
+		venue1.setName("Kilburn, G23");
+		venue1.setAddress("The University of Manchester\nOxford Rd\nManchester");
+		venue1.setPostcode("M13 9PL");
+		venue1.setCapacity(100);
+		venue1.setCoords();
+		
+		Event event1 = new Event();
+		event1.setName("COMP23412 Showcase, group G");
+		event1.setTime(LocalTime.of(16, 0));
+		event1.setDate(LocalDate.of(2021, 5, 13));
+		event1.setDescription("An event for showcasing your product made during COMP23412. Specifically for Lab Group G");
+		event1.setVenue(venue1);
+		
+		Event event2 = new Event();
+		event2.setName("COMP23412 Showcase, group H");
+		event2.setTime(LocalTime.of(11, 0));
+		event2.setDate(LocalDate.of(2021, 5, 11));
+		event2.setVenue(venue1);
+		event2.setDescription("An event for showcasing your product made during COMP23412. Specifically for Lab Group H");
+		ArrayList<Event> el = new ArrayList<Event>();
+		el.add(event1);
+		el.add(event2);
+		when(eventService.findAll()).thenReturn(el);
+		mvc.perform(get("/api/events").accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
+		.andExpect(jsonPath("$._links.self.href", endsWith("/api/events")))
+		.andExpect(jsonPath("$._embedded.events.length()", equalTo(2)))
+		.andExpect(jsonPath("$._embedded.events[0].name", equalTo(String.valueOf(event1.getName()))))
+		.andExpect(jsonPath("$._embedded.events[1].name", equalTo(String.valueOf(event2.getName()))))
+		.andExpect(jsonPath("$._embedded.events[0].venue.name", equalTo(String.valueOf(event1.getVenue().getName()))))
+		.andExpect(jsonPath("$._embedded.events[1].venue.name", equalTo(String.valueOf(event2.getVenue().getName()))));
 		verify(eventService).findAll();
 	}
 	
