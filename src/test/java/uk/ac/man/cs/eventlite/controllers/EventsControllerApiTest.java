@@ -71,6 +71,24 @@ public class EventsControllerApiTest {
 
 		verify(eventService).findAll();
 	}
+	
+	@Test
+	public void getEventJsonTest() throws Exception {
+		Event event = new Event();
+		event.setDate(LocalDate.now());
+		event.setName("Hello");
+		event.setTime(LocalTime.now());
+		when(eventService.findById(0)).thenReturn(event);
+		
+		mvc.perform(get("/api/events/0").accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
+				.andExpect(handler().methodName("getEventJson"))
+				.andExpect(jsonPath("$.date", equalTo(String.valueOf(event.getDate()))))
+				.andExpect(jsonPath("$.time", equalTo(String.valueOf(event.getTime()))))
+				.andExpect(jsonPath("$.name", equalTo(String.valueOf(event.getName()))))
+				.andExpect(jsonPath("$._links.self.href", endsWith("/api/events/0")))
+				.andExpect(jsonPath("$._links.event.href", endsWith("/api/events/0")))
+				.andExpect(jsonPath("$._links.venue.href", endsWith("/api/events/0/venue")));
+	}
 
 	@Test
 	public void deleteEventNoAuth() throws Exception {
