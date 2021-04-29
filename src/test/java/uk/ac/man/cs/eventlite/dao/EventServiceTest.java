@@ -6,16 +6,20 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.any;
 
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.Optional;
 
 import org.assertj.core.util.Arrays;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,6 +41,7 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 
 import uk.ac.man.cs.eventlite.EventLite;
 import uk.ac.man.cs.eventlite.entities.Event;
+import uk.ac.man.cs.eventlite.entities.Venue;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = EventLite.class)
@@ -50,6 +55,8 @@ public class EventServiceTest extends AbstractTransactionalJUnit4SpringContextTe
 	@Mock
 	private EventRepository eventRepository;
 	
+	@Mock 
+	private Venue v = mock(Venue.class, Mockito.RETURNS_DEEP_STUBS);
 	@Mock 
 	private Event e1 = mock(Event.class, Mockito.RETURNS_DEEP_STUBS);
 	@Mock 
@@ -179,6 +186,46 @@ public class EventServiceTest extends AbstractTransactionalJUnit4SpringContextTe
 		assertEquals(e6, iterator.next());
 		assertFalse(iterator.hasNext());
 	}
+	
+	@Test
+	public void nextEvents2() {
+		when(eventRepository.findEventsAtVenue(any(Venue.class), any(LocalDate.class))).thenReturn(setupEventsArray());
+		Iterable<Event> results = eventService.nextEvents(Optional.of(v), 2);
+		
+		Iterator<Event> iterator = results.iterator();
+		assertNotNull(iterator.next());
+		assertNotNull(iterator.next());
+		assertFalse(iterator.hasNext());	
+	}
+	
+	@Test
+	public void nextEvents3() {
+		when(eventRepository.findEventsAtVenue(any(Venue.class), any(LocalDate.class))).thenReturn(setupEventsArray());
+		Iterable<Event> results = eventService.nextEvents(Optional.of(v), 3);
+		
+		Iterator<Event> iterator = results.iterator();
+		assertNotNull(iterator.next());
+		assertNotNull(iterator.next());
+		assertNotNull(iterator.next());
+		assertFalse(iterator.hasNext());	
+	}
+	
+	@Test
+	public void nextEvents10() {
+		when(eventRepository.findEventsAtVenue(any(Venue.class), any(LocalDate.class))).thenReturn(setupEventsArray());
+		Iterable<Event> results = eventService.nextEvents(Optional.of(v), 10);
+		
+		Iterator<Event> iterator = results.iterator();
+		assertNotNull(iterator.next());
+		assertNotNull(iterator.next());
+		assertNotNull(iterator.next());
+		assertNotNull(iterator.next());
+		assertNotNull(iterator.next());
+		assertNotNull(iterator.next());
+		assertNotNull(iterator.next());
+		assertFalse(iterator.hasNext());
+	}
+	
 	// This class is here as a starter for testing any custom methods within the
 	// EventService. Note: It is currently @Disabled!
 }
