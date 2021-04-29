@@ -15,6 +15,8 @@ import uk.ac.man.cs.eventlite.dao.VenueService;
 import uk.ac.man.cs.eventlite.entities.Event;
 import uk.ac.man.cs.eventlite.entities.Venue;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Optional;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -33,11 +35,37 @@ public class VenuesControllerApi {
 	public CollectionModel<Venue> getAllVenues() {
 		return venueCollection(venueService.findAll());
 	}
+	
+	@GetMapping("/{venueId}/next3events")
+	public CollectionModel<EntityModel<Event>> getNextThreeEvents(@PathVariable long venueId) {
+		ArrayList<EntityModel<Event>> eventsModified = new ArrayList<EntityModel<Event>>();
+		Iterable<Event> events = eventService.nextEvents(venueService.findVenueById(venueId), 3);
+		Iterator<Event> i = events.iterator();
+		while(i.hasNext()) {
+			eventsModified.add(singleEvent(i.next()));
+		}
+		return eventCollectionForVenue(eventsModified, venueId);
+	}
+	
+	private CollectionModel<EntityModel<Event>> eventCollectionForVenue(Iterable<EntityModel<Event>> events, long venueId) {
+		Link selfLink = linkTo(methodOn(VenuesControllerApi.class).getNextThreeEvents(venueId)).withSelfRel();
+		
+		return CollectionModel.of(events, selfLink);
+	}
 
 	private CollectionModel<Venue> venueCollection(Iterable<Venue> venues) {
 		Link selfLink = linkTo(methodOn(VenuesControllerApi.class).getAllVenues()).withSelfRel();
 
 		return CollectionModel.of(venues, selfLink);
+	}
+	
+	private EntityModel<Event> singleEvent(Event event) {
+		Link selfLink = linkTo(EventsControllerApi.class).slash(event.getId()).withSelfRel();
+		Link eventLink = linkTo(EventsControllerApi.class).slash(event.getId()).withRel("event");
+		Link venueLink = linkTo(EventsControllerApi.class).slash(event.getId()).slash("venue").withRel("venue");
+
+
+		return EntityModel.of(event, selfLink, eventLink, venueLink);
 	}
 
 	@GetMapping("/{id}")

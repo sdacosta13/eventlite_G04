@@ -14,6 +14,8 @@ import uk.ac.man.cs.eventlite.dao.VenueService;
 import uk.ac.man.cs.eventlite.entities.Event;
 import uk.ac.man.cs.eventlite.entities.Venue;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Collections;
 import java.util.Optional;
 
@@ -144,5 +146,35 @@ public class VenuesControllerApiTest {
 		verify(venueService).findVenueById(id);
 		verify(eventService).findAllByVenue(v);
 		verify(venueService).deleteById(id);
+	}
+	
+	@Test
+	public void getNextThreeEvents() throws Exception {
+		long id = 666;
+		
+		Venue v = new Venue();
+		v.setId(id);
+		v.setName("Venue");
+		v.setAddress("localhost");
+		v.setPostcode("1337");
+		v.setCapacity(100);
+		
+		Event e = new Event();
+		e.setId(1);
+		e.setVenue(v);
+		e.setName("name");
+		e.setDate(LocalDate.now());
+		e.setTime(LocalTime.now());
+		e.setDescription("description");
+		
+		when(venueService.findVenueById(id)).thenReturn(Optional.of(v));
+		when(eventService.nextEvents(Optional.of(v), 3)).thenReturn(Collections.singletonList(e));
+
+		mvc.perform(get("/api/venues/" + id + "/next3events").accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
+				.andExpect(handler().methodName("getNextThreeEvents")).andExpect(jsonPath("$.length()", equalTo(2)))
+				.andExpect(jsonPath("$._links.self.href", endsWith("/api/venues/666/next3events")))
+				.andExpect(jsonPath("$._embedded.events.length()", equalTo(1)));
+
+		verify(eventService).nextEvents(Optional.of(v), 3);
 	}
 }
