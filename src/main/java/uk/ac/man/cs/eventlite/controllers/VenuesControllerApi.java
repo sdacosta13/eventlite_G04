@@ -2,6 +2,7 @@ package uk.ac.man.cs.eventlite.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.HttpStatus;
@@ -14,6 +15,7 @@ import uk.ac.man.cs.eventlite.entities.Event;
 import uk.ac.man.cs.eventlite.entities.Venue;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Optional;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -34,13 +36,19 @@ public class VenuesControllerApi {
 	}
 	
 	@GetMapping("/{venueId}/next3events")
-	public CollectionModel<Event> getNextThreeEvents(@PathVariable long venueId) {
-		return eventCollectionForVenue(eventService.nextEvents(venueService.findVenueById(venueId), 3), venueId);
+	public CollectionModel<EntityModel<Event>> getNextThreeEvents(@PathVariable long venueId) {
+		ArrayList<EntityModel<Event>> eventsModified = new ArrayList<EntityModel<Event>>();
+		Iterable<Event> events = eventService.nextEvents(venueService.findVenueById(venueId), 3);
+		Iterator<Event> i = events.iterator();
+		while(i.hasNext()) {
+			eventsModified.add(singleEvent(i.next()));
+		}
+		return eventCollectionForVenue(eventsModified, venueId);
 	}
 	
-	private CollectionModel<Event> eventCollectionForVenue(Iterable<Event> events, long venueId) {
+	private CollectionModel<EntityModel<Event>> eventCollectionForVenue(Iterable<EntityModel<Event>> events, long venueId) {
 		Link selfLink = linkTo(methodOn(VenuesControllerApi.class).getNextThreeEvents(venueId)).withSelfRel();
-
+		
 		return CollectionModel.of(events, selfLink);
 	}
 
@@ -48,6 +56,15 @@ public class VenuesControllerApi {
 		Link selfLink = linkTo(methodOn(VenuesControllerApi.class).getAllVenues()).withSelfRel();
 
 		return CollectionModel.of(venues, selfLink);
+	}
+	
+	private EntityModel<Event> singleEvent(Event event) {
+		Link selfLink = linkTo(EventsControllerApi.class).slash(event.getId()).withSelfRel();
+		Link eventLink = linkTo(EventsControllerApi.class).slash(event.getId()).withRel("event");
+		Link venueLink = linkTo(EventsControllerApi.class).slash(event.getId()).slash("venue").withRel("venue");
+
+
+		return EntityModel.of(event, selfLink, eventLink, venueLink);
 	}
 
 	@DeleteMapping("/{id}")
