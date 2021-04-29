@@ -1,6 +1,7 @@
 package uk.ac.man.cs.eventlite.controllers;
 
 import static org.hamcrest.Matchers.endsWith;
+import static org.hamcrest.Matchers.startsWith;
 import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
@@ -10,6 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 
 import org.junit.jupiter.api.Test;
@@ -21,6 +23,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultMatcher;
 
 import uk.ac.man.cs.eventlite.config.Security;
 import uk.ac.man.cs.eventlite.dao.EventService;
@@ -70,6 +73,24 @@ public class EventsControllerApiTest {
 				.andExpect(jsonPath("$._embedded.events.length()", equalTo(1)));
 
 		verify(eventService).findAll();
+	}
+	
+	@Test
+	public void getEventJsonTest() throws Exception {
+		Event event = new Event();
+		event.setDate(LocalDate.now());
+		event.setName("Hello");
+		event.setTime(LocalTime.now());
+		when(eventService.findById(0)).thenReturn(event);
+		
+		mvc.perform(get("/api/events/0").accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
+				.andExpect(handler().methodName("getEventJson"))
+				.andExpect(jsonPath("$.date", equalTo(String.valueOf(event.getDate()))))
+				.andExpect(jsonPath("$.time", startsWith(String.valueOf(event.getTime().format(DateTimeFormatter.ofPattern("HH:mm"))))))
+				.andExpect(jsonPath("$.name", equalTo(String.valueOf(event.getName()))))
+				.andExpect(jsonPath("$._links.self.href", endsWith("/api/events/0")))
+				.andExpect(jsonPath("$._links.event.href", endsWith("/api/events/0")))
+				.andExpect(jsonPath("$._links.venue.href", endsWith("/api/events/0/venue")));
 	}
 
 	@Test
