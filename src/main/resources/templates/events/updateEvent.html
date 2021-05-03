@@ -48,7 +48,7 @@
 
       <div class="form-group" th:classappend="${#fields.hasErrors('time')}? has-error">
         <label for="time">Event time: </label>
-        <input class="form-control" type="time" name="time" id="time" th:field="${event.time}" autofocus="autofocus" required/>
+        <input class="form-control" type="time" name="time" id="time" th:field="${event.time}" autofocus="autofocus"/>
         <p class="text-danger" th:if="${#fields.hasErrors('time')}" th:errors="*{time}">errors</p>
       </div><br>
 
