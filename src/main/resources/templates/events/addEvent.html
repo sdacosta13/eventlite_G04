@@ -13,17 +13,20 @@
 	  <a class="btn btn-warning" role="button" href="/events"><i class="fas fa-arrow-left" aria-hidden="true"></i> Back</a>
 	  <form action ="#" th:action="@{eventSubmit}" th:object="${event}" method="post">
 	  	<br>
-	  	<div class="form-group">
+	  	<div class="form-group" th:classappend="${#fields.hasErrors('name')}? has-error">
 	  		<label for="name">Event name:</label>
 	  		<input class="form-control" type="text" th:field="${event.name}" id="name" name="name" maxlength="256" placeholder="Enter event name" required>
+	  		<p class="text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">errors</p>
 	  	</div><br>
-	  	<div class="form-group">
+	  	<div class="form-group" h:classappend="${#fields.hasErrors('date')}? has-error">
 	  		<label>Event Date:</label>
 	  		<input class="form-control" type="date" name="date" id="date" th:field="${event.date}" required>
+	  		<span class="text-danger" th:if="${#fields.hasErrors('date')}" th:errors="*{date}">errors</span>
 	  	</div><br>
-	  	<div class="form-group">
+	  	<div class="form-group" th:classappend="${#fields.hasErrors('time')}? has-error">
 	  		<label>Event Time:</label>
 	  		<input class="form-control" type="time" th:field="${event.time}">
+	  		<p class="text-danger" th:if="${#fields.hasErrors('time')}" th:errors="*{time}">errors</p>
 	  	</div><br>
 	  	<div class="form-group">
   			<label>Event Venue:</label>
