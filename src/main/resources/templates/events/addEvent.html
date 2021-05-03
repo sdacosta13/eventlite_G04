@@ -23,7 +23,7 @@
 	  	</div><br>
 	  	<div class="form-group">
 	  		<label>Event Time:</label>
-	  		<input class="form-control" type="time" th:field="${event.time}" required>
+	  		<input class="form-control" type="time" th:field="${event.time}">
 	  	</div><br>
 	  	<div class="form-group">
   			<label>Event Venue:</label>
@@ -33,7 +33,7 @@
 		</div><br>
 		<div class="form-group">
 	  		<label>Event Description:</label>
-	  		<input class="form-control" type="text" th:field="${event.description}" id="description" name="description" placeholder="Enter event description" required>
+	  		<input class="form-control" type="text" th:field="${event.description}" id="description" name="description" placeholder="Enter event description">
 	  	</div><br>
 	  	<button type="submit" class="btn btn-primary">Submit</button>
 	  </form>
