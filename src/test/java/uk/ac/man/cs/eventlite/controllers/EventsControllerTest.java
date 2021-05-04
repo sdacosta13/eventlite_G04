@@ -17,8 +17,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
+import static org.mockito.ArgumentMatchers.any;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Collections;
 
 import org.junit.jupiter.api.Test;
@@ -125,19 +127,23 @@ public class EventsControllerTest {
 				.andExpect(header().string("Location", endsWith("/sign-in")));
 		
 		verify(eventService, never()).save(event);
+		verifyNoInteractions(event);
 	}
 	
 	@Test
 	public void updateEventWithAuthenticationTest() throws Exception {
-		ArgumentCaptor<Event> arg = ArgumentCaptor.forClass(Event.class);
+		when(eventService.findById(9999)).thenReturn(event);
+		when(venueService.findById(8888)).thenReturn(venue);
 		
 		mvc.perform(post("/events/updateEvent").with(user("Rob").roles(Security.ADMIN_ROLE))
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
 				.with(csrf())
-				.param("name", "name")
+				.param("id", "9999")
+				.param("name", "New name")
 				.param("date", "2022-03-01")
 				.param("time", "")
-				.param("venue.id", "1")
+				.param("venue.id", "8888")
+				.param("description", "")
 				.accept(MediaType.TEXT_HTML))
 				.andExpect(status().isFound())
 				.andExpect(view().name("redirect:/events"))
@@ -145,8 +151,47 @@ public class EventsControllerTest {
 				.andExpect(handler().methodName("updateEvent"))
 				.andExpect(flash().attributeExists("ok_message"));
 
-		verify(eventService).save(arg.capture());
+		verify(eventService).save(any());
 	}
+	
+	@Test
+	public void updateNonExistingEventTest() throws Exception {		
+		mvc.perform(post("/events/updateEvent").with(user("Rob").roles(Security.ADMIN_ROLE))
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+				.with(csrf())
+				.param("name", "New name")
+				.param("date", "2022-03-01")
+				.param("time", "")
+				.param("venue.id", String.valueOf(venue.getId()))
+				.param("description", "")
+				.accept(MediaType.TEXT_HTML))
+				.andExpect(view().name("redirect:/events"))
+				.andExpect(flash().attributeExists("bad_message"));
+
+		verify(eventService, never()).save(any());
+	}
+	
+	@Test
+	public void updateEventBadVenueTest() throws Exception {
+		when(eventService.findById(9999)).thenReturn(event);
+		
+		mvc.perform(post("/events/updateEvent").with(user("Rob").roles(Security.ADMIN_ROLE))
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+				.with(csrf())
+				.param("id", "9999")
+				.param("name", "New name")
+				.param("date", "2022-03-01")
+				.param("time", "")
+				.param("venue.id", "8888")
+				.param("description", "")
+				.accept(MediaType.TEXT_HTML))
+				.andExpect(status().isFound())
+				.andExpect(view().name("redirect:/events/updateEvent"))
+				.andExpect(flash().attributeExists("bad_message"));
+
+		verify(eventService, never()).save(any());
+	}
+	
 	@Test
 	public void eventAddDropdownTest() throws Exception{
 		mvc.perform(get("/events/addEvent").accept(MediaType.TEXT_HTML))
@@ -166,7 +211,7 @@ public class EventsControllerTest {
 				.param("name", "test")
 				.param("time", "16:00")
 				.param("date", "2022-03-01")
-				.param("venue.id", "1"))
+				.param("venue.id", String.valueOf(venue.getId())))
 				.andExpect(redirectedUrl("/events"))
 				.andExpect(view().name("redirect:/events"));
 				
