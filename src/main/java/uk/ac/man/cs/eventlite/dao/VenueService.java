@@ -18,6 +18,8 @@ public interface VenueService {
 	
 	public Optional<Venue> findVenueById(long id);
 	
+	public Venue findById(long id);
+	
 	public void deleteById(long id);
 
 	public Venue save(Venue entity);
