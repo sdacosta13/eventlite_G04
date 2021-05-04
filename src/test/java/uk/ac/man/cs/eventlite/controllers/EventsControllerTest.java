@@ -161,7 +161,12 @@ public class EventsControllerTest {
 
 	@Test
 	public void testAddEventFunctionalityWithSecurity() throws Exception{
-		mvc.perform(post("/events/eventSubmit").with(user("Rob").roles(Security.ADMIN_ROLE)).with(csrf()))
+		mvc.perform(post("/events/eventSubmit").with(user("Rob").roles(Security.ADMIN_ROLE))
+				.with(csrf())
+				.param("name", "test")
+				.param("time", "16:00")
+				.param("date", "2022-03-01")
+				.param("venue.id", "1"))
 				.andExpect(redirectedUrl("/events"))
 				.andExpect(view().name("redirect:/events"));
 				
