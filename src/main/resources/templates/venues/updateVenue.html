@@ -40,7 +40,7 @@
 
       <div class="form-group has-error has-feedback" th:classappend="${#fields.hasErrors('capacity')}? has-error">
         <label class="control-label" for="capacity">Capacity: </label>
-        <input class="form-control" type="number" name="capacity" id="capacity" th:field="${venue.capacity}" autofocus="autofocus" />
+        <input class="form-control" type="number" step="1" min="1" name="capacity" id="capacity" th:field="${venue.capacity}" autofocus="autofocus" required/>
 
         <span class="text-danger" th:if="${#fields.hasErrors('capacity')}" th:errors="*{capacity}">errors</span>
       </div><br>

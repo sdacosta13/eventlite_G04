@@ -14,7 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.Future;
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import javax.validation.constraints.NotNull;
 
@@ -36,7 +36,7 @@ public class Event {
 	@DateTimeFormat(pattern = "HH:mm")
 	private LocalTime time;
 
-	@NotEmpty(message = "Event must have a name.")
+	@NotBlank(message = "Event must have a name.")
 	@Size(max = 255, message = "Name must not be longer than 255 characters.")
 	private String name;
 	

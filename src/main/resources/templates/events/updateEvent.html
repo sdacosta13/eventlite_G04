@@ -52,9 +52,10 @@
         <p class="text-danger" th:if="${#fields.hasErrors('time')}" th:errors="*{time}">errors</p>
       </div><br>
 
-      <div class="form-group">
+      <div class="form-group" th:classappend="${#fields.hasErrors('description')}? has-error">
         <label for="description">Event description: </label>
         <textarea class="form-control" rows="3" th:field="${event.description}"></textarea>
+        <p class="text-danger" th:if="${#fields.hasErrors('description')}" th:errors="*{description}">errors</p>
       </div>
 
       <button class="btn btn-primary" type="submit"><i class="fas fa-bookmark" aria-field="true"></i> Update </button>

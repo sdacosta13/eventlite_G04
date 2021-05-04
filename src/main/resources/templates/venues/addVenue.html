@@ -13,21 +13,26 @@
 	  <a class="btn btn-warning" role="button" href="/events"><i class="fas fa-arrow-left" aria-hidden="true"></i> Back</a>
 	  <form action ="#" th:action="@{venueSubmit}" th:object="${venue}" method="post">
 	  	<br>
-	  	<div class="form-group">
+	  	<div class="form-group has-error has-feedback" th:classappend="${#fields.hasErrors('name')}? has-error">
 	  		<label >Venue name:</label>
-	  		<input class="form-control" type="text" th:field="${venue.name}" maxlength="256" placeholder="Enter venue name" required>
+	  		<input class="form-control" type="text" name="name" id="name" th:field="${venue.name}" maxlength="256" placeholder="Enter venue name" required>
+        <span class="text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">errors</span>
 	  	</div><br>
-	  	<div class="form-group">
-	  		<label>Venue Address:</label>
-	  		<input class="form-control" type="text" th:field="${venue.address}" maxlength="256" placeholder="Enter address" required>
-	  	</div><br>
-	  	<div class="form-group">
+      <div class="form-group has-error has-feedback" th:classappend="${#fields.hasErrors('address')}? has-error">
+        <label class="control-label" for="address">Address: </label>
+        <input class="form-control" type="text" name="address" id="address" th:field="${venue.address}" autofocus="autofocus" />
+
+        <span class="text-danger" th:if="${#fields.hasErrors('address')}" th:errors="*{address}">errors</span>
+      </div><br>
+	  	<div class="form-group has-error has-feedback" th:classappend="${#fields.hasErrors('postcode')}? has-error">
 	  		<label>Venue Postcode:</label>
-	  		<input class="form-control" type="text" th:field="${venue.postcode}" maxlength="256" placeholder="Enter Postcode" required>
+	  		<input class="form-control" type="text" name="postcode" id="postcode" th:field="${venue.postcode}" maxlength="256" placeholder="Enter Postcode" required>
+        <span class="text-danger" th:if="${#fields.hasErrors('postcode')}" th:errors="*{postcode}">errors</span>
 	  	</div><br>
-	  	<div class="form-group">
+	  	<div class="form-group has-error has-feedback" th:classappend="${#fields.hasErrors('capacity')}? has-error">
 	  		<label>Venue Capacity:</label>
-	  		<input class="form-control" type="number" th:field="${venue.capacity}" min="1"required>
+	  		<input class="form-control" type="number" name="capacity" id="capacity" th:field="${venue.capacity}" min="1"required>
+        <span class="text-danger" th:if="${#fields.hasErrors('capacity')}" th:errors="*{capacity}">errors</span>
 	  	</div><br>
 	  	<button type="submit" class="btn btn-primary">Submit</button>
 	  </form>

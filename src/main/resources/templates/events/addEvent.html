@@ -34,10 +34,11 @@
     			<option th:each="v : ${venues}" th:value="${v.id}" th:text="${v.name}"></option>
   			</select>
 		</div><br>
-		<div class="form-group">
-	  		<label>Event Description:</label>
-	  		<input class="form-control" type="text" th:field="${event.description}" id="description" name="description" placeholder="Enter event description">
-	  	</div><br>
+		<div class="form-group" th:classappend="${#fields.hasErrors('description')}? has-error">
+        <label for="description">Event description: </label>
+        <textarea class="form-control" rows="3" th:field="${event.description}"></textarea>
+        <p class="text-danger" th:if="${#fields.hasErrors('description')}" th:errors="*{description}">errors</p>
+      </div>
 	  	<button type="submit" class="btn btn-primary">Submit</button>
 	  </form>
   </div>

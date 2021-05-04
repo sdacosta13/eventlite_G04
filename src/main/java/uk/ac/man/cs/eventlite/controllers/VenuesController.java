@@ -71,8 +71,14 @@ public class VenuesController {
 		model.addAttribute("venue", new Venue());
 		return "venues/addVenue";
 	}
-	@PostMapping(value="/venueSubmit")
-	public String venueSubmit(@ModelAttribute Venue venue, RedirectAttributes redirectAttrs) {
+	@PostMapping(consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE, value="venueSubmit")
+	public String venueSubmit(@RequestBody @Valid @ModelAttribute Venue venue, BindingResult errors,
+			Model model, RedirectAttributes redirectAttrs) {
+		
+		if (errors.hasErrors()) {
+			model.addAttribute("venue", venue);
+			return "venues/addVenue";
+		}
 		if(!venue.setCoords()) {
 			redirectAttrs.addFlashAttribute("error_message",
 					"Failed to add venue. Can not find the address");
