@@ -127,6 +127,8 @@ public class EventsControllerApiTest {
 				.andExpect(jsonPath("$._links.self.href", endsWith("/api/events/0")))
 				.andExpect(jsonPath("$._links.event.href", endsWith("/api/events/0")))
 				.andExpect(jsonPath("$._links.venue.href", endsWith("/api/events/0/venue")));
+		
+		verify(eventService).findById(0);
 	}
 
 	@Test

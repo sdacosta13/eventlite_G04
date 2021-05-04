@@ -2,6 +2,17 @@ package uk.ac.man.cs.eventlite.controllers;
 
 import static org.hamcrest.Matchers.endsWith;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.startsWith;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.handler;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,6 +28,7 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 import uk.ac.man.cs.eventlite.EventLite;
+import uk.ac.man.cs.eventlite.entities.Event;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = EventLite.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -40,4 +52,22 @@ public class EventsControllerApiIntegrationTest extends AbstractTransactionalJUn
 				.contentType(MediaType.APPLICATION_JSON).expectBody().jsonPath("$._links.self.href")
 				.value(endsWith("/api/events")).jsonPath("$._embedded.events.length()").value(equalTo(3));
 	}
+	
+	@Test
+	public void getEventTest() throws Exception {
+		/**
+		 * This test requires the event with id 5 to be
+		 * present in the database.
+		 */
+		client.get().uri("/events/5").accept(MediaType.APPLICATION_JSON).exchange().expectStatus().isOk().expectHeader()
+				.contentType(MediaType.APPLICATION_JSON).expectBody()
+				.jsonPath("$.date").value(equalTo(String.valueOf(LocalDate.of(2021, 5, 11))))
+				.jsonPath("$.time").value(equalTo(String.valueOf(LocalTime.of(11, 00, 00).format(DateTimeFormatter.ofPattern("HH:mm:ss")))))
+				.jsonPath("$.name").value(equalTo("COMP23412 Showcase, group H"))
+				.jsonPath("$._links.length()").value(equalTo(3))
+				.jsonPath("$._links.self.href").value(endsWith("/api/events/5"))
+				.jsonPath("$._links.event.href").value(endsWith("/api/events/5"))
+				.jsonPath("$._links.venue.href").value(endsWith("/api/events/5/venue"));
+	}
+
 }

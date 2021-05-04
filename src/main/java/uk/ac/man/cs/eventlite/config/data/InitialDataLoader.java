@@ -73,6 +73,7 @@ public class InitialDataLoader implements ApplicationListener<ContextRefreshedEv
 		event1.setVenue(venue1);
 		
 		Event event2 = new Event();
+		event2.setId(5);	// Hard code this one to use in the integration tests
 		event2.setName("COMP23412 Showcase, group H");
 		event2.setTime(LocalTime.of(11, 0));
 		event2.setDate(LocalDate.of(2021, 5, 11));
