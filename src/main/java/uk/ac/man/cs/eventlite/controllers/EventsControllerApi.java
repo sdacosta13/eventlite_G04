@@ -31,11 +31,11 @@ public class EventsControllerApi {
 	
 	@GetMapping("/{id}")
 	public ResponseEntity<EntityModel<APIEvent>> getEventJson(@PathVariable("id") long id) {
-		Optional<Event> event = eventService.findEventById(id);
-		if (event.isEmpty()) {
+		Event event = eventService.findById(id);
+		if (event == null) {
 			return ResponseEntity.noContent().build();
 		}
-		return ResponseEntity.ok(singleEvent(eventService.findById(id)));
+		return ResponseEntity.ok(singleEvent(event));
 	}
 
 	@DeleteMapping("/{eventId}")
