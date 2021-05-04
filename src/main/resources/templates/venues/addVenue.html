@@ -15,7 +15,7 @@
 	  	<br>
 	  	<div class="form-group has-error has-feedback" th:classappend="${#fields.hasErrors('name')}? has-error">
 	  		<label >Venue name:</label>
-	  		<input class="form-control" type="text" name="name" id="name" th:field="${venue.name}" maxlength="256" placeholder="Enter venue name" required>
+	  		<input class="form-control" type="text" name="name" id="name" th:field="${venue.name}" maxlength="255" placeholder="Enter venue name" required>
         <span class="text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">errors</span>
 	  	</div><br>
       <div class="form-group has-error has-feedback" th:classappend="${#fields.hasErrors('address')}? has-error">
@@ -26,7 +26,7 @@
       </div><br>
 	  	<div class="form-group has-error has-feedback" th:classappend="${#fields.hasErrors('postcode')}? has-error">
 	  		<label>Venue Postcode:</label>
-	  		<input class="form-control" type="text" name="postcode" id="postcode" th:field="${venue.postcode}" maxlength="256" placeholder="Enter Postcode" required>
+	  		<input class="form-control" type="text" name="postcode" id="postcode" th:field="${venue.postcode}" placeholder="Enter Postcode" required>
         <span class="text-danger" th:if="${#fields.hasErrors('postcode')}" th:errors="*{postcode}">errors</span>
 	  	</div><br>
 	  	<div class="form-group has-error has-feedback" th:classappend="${#fields.hasErrors('capacity')}? has-error">
