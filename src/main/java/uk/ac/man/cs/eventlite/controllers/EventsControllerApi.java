@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import uk.ac.man.cs.eventlite.dao.EventService;
 import uk.ac.man.cs.eventlite.entities.APIEvent;
 import uk.ac.man.cs.eventlite.entities.Event;
+import java.util.Optional;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -29,8 +30,12 @@ public class EventsControllerApi {
 	}
 	
 	@GetMapping("/{id}")
-	public EntityModel<APIEvent> getEventJson(@PathVariable("id") long id) {
-		return singleEvent(eventService.findById(id));
+	public ResponseEntity<EntityModel<APIEvent>> getEventJson(@PathVariable("id") long id) {
+		Optional<Event> event = eventService.findEventById(id);
+		if (event.isEmpty()) {
+			return ResponseEntity.noContent().build();
+		}
+		return ResponseEntity.ok(singleEvent(eventService.findById(id)));
 	}
 
 	@DeleteMapping("/{eventId}")
