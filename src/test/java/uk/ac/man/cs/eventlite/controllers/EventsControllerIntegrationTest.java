@@ -1,16 +1,21 @@
 package uk.ac.man.cs.eventlite.controllers;
 
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.endsWith;
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.web.reactive.function.client.ExchangeFilterFunctions.basicAuthentication;
 
+import java.util.Iterator;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.MediaType;
@@ -25,6 +30,8 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 import uk.ac.man.cs.eventlite.EventLite;
+import uk.ac.man.cs.eventlite.dao.EventService;
+import uk.ac.man.cs.eventlite.entities.Event;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = EventLite.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -41,6 +48,9 @@ public class EventsControllerIntegrationTest extends AbstractTransactionalJUnit4
 	private int numRows;
 
 	private WebTestClient client;
+	
+	@Autowired
+	private EventService eventService;
 
 	@BeforeEach
 	public void setup() {
@@ -50,7 +60,41 @@ public class EventsControllerIntegrationTest extends AbstractTransactionalJUnit4
 
 	@Test
 	public void testGetAllEvents() {
-		client.get().uri("/events").accept(MediaType.TEXT_HTML).exchange().expectStatus().isOk();
+		Iterator<Event> iterator = eventService.findAll().iterator();
+		assertTrue(iterator.hasNext());
+		Event e = iterator.next();
+		client.get().uri("/events").accept(MediaType.TEXT_HTML).exchange().expectStatus().isOk()
+		.expectBody(String.class).consumeWith(result -> {
+            assertThat(result.getResponseBody(), containsString(e.getName()));
+            assertThat(result.getResponseBody(), containsString(e.getDate().toString()));
+            assertThat(result.getResponseBody(), containsString(e.getTime().toString()));
+            assertThat(result.getResponseBody(), containsString(e.getVenue().getName()));
+            assertThat(result.getResponseBody(), containsString(e.getDescription()));
+            assertThat(result.getResponseBody(), containsString(String.valueOf(e.getVenue().getLongitude())));
+            assertThat(result.getResponseBody(), containsString(String.valueOf(e.getVenue().getLatitude()))); 
+		});
+	}
+	
+	@Test
+	public void testGetEvent() {
+		Optional<Event> e = eventService.findEventById(4);
+		assertTrue(e.isPresent());
+		
+		client.get().uri("/event/4").accept(MediaType.TEXT_HTML).exchange().expectStatus().isOk()
+		.expectBody(String.class).consumeWith(result -> {
+            assertThat(result.getResponseBody(), containsString(e.get().getName()));
+            assertThat(result.getResponseBody(), containsString(e.get().getDate().toString()));
+            assertThat(result.getResponseBody(), containsString(e.get().getTime().toString()));
+            assertThat(result.getResponseBody(), containsString(e.get().getVenue().getName()));
+            assertThat(result.getResponseBody(), containsString(e.get().getDescription()));
+            assertThat(result.getResponseBody(), containsString(String.valueOf(e.get().getVenue().getLongitude())));
+            assertThat(result.getResponseBody(), containsString(String.valueOf(e.get().getVenue().getLatitude())));
+		});
+	}
+	
+	@Test
+	public void testGetNonExistingEvent() {
+		client.get().uri("/event/123123123123121").accept(MediaType.TEXT_HTML).exchange().expectStatus().isFound().expectHeader().value("Location", endsWith("/events"));
 	}
 	
 	@Test

@@ -7,6 +7,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
+import java.util.Optional;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -50,14 +52,15 @@ public class EventPageControllerTest {
 
 	@Test
 	public void getPageWhenEventExists() throws Exception {
+		Optional<Event> eventContainer = Optional.of(event);
 		when(venue.getName()).thenReturn("Kilburn Building");
 
 		when(event.getVenue()).thenReturn(venue);
-		when(eventService.findById(0)).thenReturn(event);
+		when(eventService.findEventById(0)).thenReturn(eventContainer);
 
 		mvc.perform(get("/event/0").accept(MediaType.TEXT_HTML)).andExpect(status().isOk())
 		.andExpect(view().name("events/info-page")).andExpect(handler().methodName("getEventInfo"));
 
-		verify(eventService).findById(0);
+		verify(eventService).findEventById(0);
 	}
 }
