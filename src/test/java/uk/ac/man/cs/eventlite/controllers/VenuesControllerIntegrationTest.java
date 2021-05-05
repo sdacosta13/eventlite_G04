@@ -1,16 +1,21 @@
 package uk.ac.man.cs.eventlite.controllers;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.endsWith;
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.web.reactive.function.client.ExchangeFilterFunctions.basicAuthentication;
 
+import java.util.Iterator;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.MediaType;
@@ -25,6 +30,9 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 import uk.ac.man.cs.eventlite.EventLite;
+import uk.ac.man.cs.eventlite.dao.VenueService;
+import uk.ac.man.cs.eventlite.entities.Event;
+import uk.ac.man.cs.eventlite.entities.Venue;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = EventLite.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -41,6 +49,9 @@ public class VenuesControllerIntegrationTest extends AbstractTransactionalJUnit4
 	private WebTestClient client;
 	
 	private int numRows;
+	
+	@Autowired
+	private VenueService venueService;
 
 	@BeforeEach
 	public void setup() {
@@ -50,7 +61,35 @@ public class VenuesControllerIntegrationTest extends AbstractTransactionalJUnit4
 
 	@Test
 	public void testGetAllVenues() {
-		client.get().uri("/venues").accept(MediaType.TEXT_HTML).exchange().expectStatus().isOk();
+		Iterator<Venue> iterator = venueService.findAll().iterator();
+		assertTrue(iterator.hasNext());
+		Venue v = iterator.next();
+		client.get().uri("/venues").accept(MediaType.TEXT_HTML).exchange().expectStatus().isOk()
+		.expectBody(String.class).consumeWith(result -> {
+            assertThat(result.getResponseBody(), containsString(v.getName()));
+            assertThat(result.getResponseBody(), containsString(String.valueOf(v.getCapacity())));
+            assertThat(result.getResponseBody(), containsString(v.getPostcode()));
+            assertThat(result.getResponseBody(), containsString(v.getAddress()));
+		});
+	}
+	
+	@Test
+	public void testGetVenue() {
+		Optional<Venue> v = venueService.findVenueById(1);
+		assertTrue(v.isPresent());
+		
+		client.get().uri("/venue/1").accept(MediaType.TEXT_HTML).exchange().expectStatus().isOk()
+		.expectBody(String.class).consumeWith(result -> {
+            assertThat(result.getResponseBody(), containsString(v.get().getName()));
+            assertThat(result.getResponseBody(), containsString(String.valueOf(v.get().getCapacity())));
+            assertThat(result.getResponseBody(), containsString(v.get().getPostcode()));
+            assertThat(result.getResponseBody(), containsString(v.get().getAddress()));
+		});
+	}
+	
+	@Test
+	public void testGetNonExistingVenue() {
+		client.get().uri("/venue/123123123123121").accept(MediaType.TEXT_HTML).exchange().expectStatus().isFound().expectHeader().value("Location", endsWith("/venues"));
 	}
 	
 	@Test
