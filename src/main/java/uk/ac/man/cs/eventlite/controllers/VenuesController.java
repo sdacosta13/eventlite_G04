@@ -56,6 +56,10 @@ public class VenuesController {
 			model.addAttribute("venue", venue);
 			return "venues/updateVenue";
 		}
+		if (venueService.findById(venue.getId()) == null) {
+			redirectAttrs.addFlashAttribute("bad_message", "Venue does not exist.");
+			return "redirect:/venues";
+		}
 		if(!venue.setCoords()) {
 			redirectAttrs.addFlashAttribute("error_message",
 					"Failed to add venue. Can not find the address");

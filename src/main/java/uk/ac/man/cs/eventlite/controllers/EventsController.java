@@ -135,6 +135,18 @@ public class EventsController {
 			return "events/updateEvent";
 		}
 		
+		// Check that the event we are trying to update exists
+		if (eventService.findById(event.getId()) == null) {
+			redirectAttrs.addFlashAttribute("bad_message", "Event does not exist.");
+			return "redirect:/events";
+		}
+		
+		// Check that the venue specified exsits
+		if (venueService.findById(event.getVenue().getId()) == null) {
+			redirectAttrs.addFlashAttribute("bad_message", "Venue does not exist.");
+			return "redirect:/events/updateEvent";
+		}
+		
 		// The save method also acts as an update method, given that
 		// the id of the updatedEvent is same as the id of event passed
 		// to the model in the getEventById method above.
