@@ -69,5 +69,19 @@ public class EventsControllerApiIntegrationTest extends AbstractTransactionalJUn
 				.jsonPath("$._links.event.href").value(endsWith("/api/events/5"))
 				.jsonPath("$._links.venue.href").value(endsWith("/api/events/5/venue"));
 	}
-
+	// The following tests assume the database has been reset
+	@Test
+	public void getEventsListTest() throws Exception{
+		client.get().uri("/events").accept(MediaType.APPLICATION_JSON).exchange().expectStatus().isOk().expectHeader()
+		.contentType(MediaType.APPLICATION_JSON).expectBody()
+		.jsonPath("$._links.self.href").value(endsWith("/api/events"))
+		.jsonPath("$._embedded.events[0].id").value(equalTo(6))
+		.jsonPath("$._embedded.events[0].date").value(equalTo(String.valueOf(LocalDate.of(2021, 5, 10))))
+		.jsonPath("$._embedded.events[0].time").value(equalTo(String.valueOf(LocalTime.of(16, 00, 00).format(DateTimeFormatter.ofPattern("HH:mm:ss")))))
+		.jsonPath("$._embedded.events[0].name").value(equalTo("COMP23412 Showcase, group F"))
+		.jsonPath("$._embedded.events[0].venue.id").value(equalTo(3));
+	}
+	
+	
+	
 }
