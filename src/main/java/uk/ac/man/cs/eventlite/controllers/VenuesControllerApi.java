@@ -35,6 +35,10 @@ public class VenuesControllerApi {
 	}
 
 	private CollectionModel<Venue> venueCollection(Iterable<Venue> venues) {
+		for (Venue venue : venues) {
+			Link selfLink = linkTo(methodOn(VenuesControllerApi.class).getVenue(venue.getId())).withSelfRel();
+			venue.add(selfLink);
+		}
 		Link selfLink = linkTo(methodOn(VenuesControllerApi.class).getAllVenues()).withSelfRel();
 
 		return CollectionModel.of(venues, selfLink);

@@ -17,12 +17,13 @@ import com.mapbox.api.geocoding.v5.models.CarmenFeature;
 import com.mapbox.api.geocoding.v5.models.GeocodingResponse;
 import com.mapbox.geojson.Point;
 
+import org.springframework.hateoas.RepresentationModel;
 import retrofit2.Response;
 
 
 @Entity
 @Table(name = "venues")
-public class Venue {
+public class Venue extends RepresentationModel<Venue> {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
