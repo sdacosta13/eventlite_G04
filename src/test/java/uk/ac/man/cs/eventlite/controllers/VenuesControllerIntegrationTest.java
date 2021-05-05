@@ -94,6 +94,27 @@ public class VenuesControllerIntegrationTest extends AbstractTransactionalJUnit4
 	}
 	
 	@Test
+	public void updateNonExistentVenueTest() {
+		String[] tokens = login();
+
+		MultiValueMap<String, String> form = new LinkedMultiValueMap<>();
+		form.add("_csrf", tokens[0]);
+		form.add("id", "111000");
+		form.add("name", "My venue");
+		form.add("address", "my address");
+		form.add("postcode", "M13 9PL");
+		form.add("capacity", "100");
+		
+		// Session ID cookie holds login credentials.
+		client.post().uri("/venues/updateVenue").accept(MediaType.TEXT_HTML).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.bodyValue(form).cookies(cookies -> {
+					cookies.add(SESSION_KEY, tokens[1]);
+				}).exchange().expectHeader().value("Location", endsWith("/venues"));
+		
+		assertThat(numRows, equalTo(countRowsInTable("venues")));
+	}
+	
+	@Test
 	public void updateVenueNoName() {
 		String[] tokens = login();
 

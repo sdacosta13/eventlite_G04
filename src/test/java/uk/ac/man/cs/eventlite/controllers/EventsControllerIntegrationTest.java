@@ -100,6 +100,33 @@ public class EventsControllerIntegrationTest extends AbstractTransactionalJUnit4
 	}
 	
 	@Test
+	public void updateNonExistingEvent() {
+		String[] tokens = login();
+
+		MultiValueMap<String, String> form = new LinkedMultiValueMap<>();
+		form.add("_csrf", tokens[0]);
+		form.add("id", "99999");  // Does not exist in the db
+		form.add("name", "Event name");
+		form.add("venue.id", "2");	// This venue (with id 2) must exist in the db
+		form.add("date", "2022-03-01");
+		
+		// Time and description are optional
+		form.add("time", "");
+		form.add("description", "");
+		
+		// Session ID cookie holds login credentials.
+		client.post().uri("/events/updateEvent").accept(MediaType.TEXT_HTML).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.bodyValue(form).cookies(cookies -> {
+					cookies.add(SESSION_KEY, tokens[1]);
+				}).exchange().expectHeader().value("Location", endsWith("/events"));
+		
+		// The controller will just redirect to the events page
+		// if non-existing event is requested to be updated
+		
+		assertThat(numRows, equalTo(countRowsInTable("events")));
+	}
+	
+	@Test
 	public void updateEventNoNameTest() {
 		String[] tokens = login();
 
@@ -204,7 +231,31 @@ public class EventsControllerIntegrationTest extends AbstractTransactionalJUnit4
 		form.add("_csrf", tokens[0]);
 		form.add("id", "5");
 		form.add("name", "Testing...");
-		form.add("venue.id", "");	// Non-existent venue
+		form.add("venue.id", "");	// Not specified
+		form.add("date", "2020-03-01"); // Date in the past
+		
+		// Time and description are optional
+		form.add("time", "");
+		form.add("description", "");
+		
+		// Session ID cookie holds login credentials.
+		client.post().uri("/events/updateEvent").accept(MediaType.TEXT_HTML).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.bodyValue(form).cookies(cookies -> {
+					cookies.add(SESSION_KEY, tokens[1]);
+				}).exchange().expectStatus().isOk();
+		
+		assertThat(numRows, equalTo(countRowsInTable("events")));
+	}
+	
+	@Test
+	public void updateEventNonExistentVenueTest() {
+		String[] tokens = login();
+
+		MultiValueMap<String, String> form = new LinkedMultiValueMap<>();
+		form.add("_csrf", tokens[0]);
+		form.add("id", "5");
+		form.add("name", "Testing...");
+		form.add("venue.id", "1001001001");	// Non-existent venue
 		form.add("date", "2020-03-01"); // Date in the past
 		
 		// Time and description are optional
