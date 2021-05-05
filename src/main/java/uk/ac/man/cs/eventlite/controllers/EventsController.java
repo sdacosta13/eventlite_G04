@@ -93,7 +93,13 @@ public class EventsController {
 			model.addAttribute("venues", venueService.findAll());
 			return "events/addEvent";
 		}
+		// Check that the venue specified exsits
+		if (venueService.findById(event.getVenue().getId()) == null) {
+			redirectAttrs.addFlashAttribute("error_message", "Venue does not exist.");
+			return "redirect:/events";
+		}
 		eventService.save(event);
+		redirectAttrs.addFlashAttribute("ok_message", "Event created successfuly.");
 		return "redirect:/events";
 	}
 	@DeleteMapping("/{eventId}")
@@ -137,13 +143,13 @@ public class EventsController {
 		
 		// Check that the event we are trying to update exists
 		if (eventService.findById(event.getId()) == null) {
-			redirectAttrs.addFlashAttribute("bad_message", "Event does not exist.");
+			redirectAttrs.addFlashAttribute("error_message", "Event does not exist.");
 			return "redirect:/events";
 		}
 		
 		// Check that the venue specified exsits
 		if (venueService.findById(event.getVenue().getId()) == null) {
-			redirectAttrs.addFlashAttribute("bad_message", "Venue does not exist.");
+			redirectAttrs.addFlashAttribute("error_message", "Venue does not exist.");
 			return "redirect:/events/updateEvent";
 		}
 		
