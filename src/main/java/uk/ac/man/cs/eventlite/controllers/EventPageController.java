@@ -1,5 +1,7 @@
 package uk.ac.man.cs.eventlite.controllers;
 
+import java.util.Optional;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
@@ -19,6 +21,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import twitter4j.Status;
 import twitter4j.TwitterException;
 import uk.ac.man.cs.eventlite.dao.EventService;
+import uk.ac.man.cs.eventlite.entities.Event;
 import uk.ac.man.cs.eventlite.services.TwitterService;
 
 @Controller
@@ -32,8 +35,13 @@ public class EventPageController {
 	private TwitterService twitterService;
 	
 	@GetMapping
-	public String getEventInfo(Model model, @PathVariable Long eventId) {
-		model.addAttribute("event", eventService.findById(eventId));
+	public String getEventInfo(Model model, RedirectAttributes redirectAttrs, @PathVariable Long eventId) {
+		Optional<Event> e = eventService.findEventById(eventId);
+		if (e.isEmpty()) {
+			redirectAttrs.addFlashAttribute("error_message", String.format("Event with id %d does not exist!", eventId));
+			return "redirect:/events";
+		}
+		model.addAttribute("event", e.get());
 		return "events/info-page";
 	}
 	
