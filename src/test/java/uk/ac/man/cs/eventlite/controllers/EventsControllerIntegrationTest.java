@@ -74,6 +74,26 @@ public class EventsControllerIntegrationTest extends AbstractTransactionalJUnit4
 		
 		assertThat(numRows, equalTo(countRowsInTable("events")));
 	}
+	@Test
+	public void addEventNoAuthenticationTest() {
+		String[] tokens = login();
+
+		MultiValueMap<String, String> form = new LinkedMultiValueMap<>();
+		form.add("_csrf", tokens[0]);
+		form.add("name", "Test event");
+		form.add("venue", "5");
+		form.add("date", "2022-03-01");
+		
+		// Time and description are optional
+		form.add("time", "");
+		form.add("description", "");
+		
+		client.post().uri("/events/eventSubmit").accept(MediaType.TEXT_HTML).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.bodyValue(form).exchange().expectStatus().isFound().expectHeader()
+				.value("Location", endsWith("/sign-in"));
+		
+		assertThat(numRows, equalTo(countRowsInTable("events")));
+	}
 	
 	@Test
 	public void updateEventWithAuthenticationTest() {
@@ -97,6 +117,28 @@ public class EventsControllerIntegrationTest extends AbstractTransactionalJUnit4
 				}).exchange().expectStatus().isFound().expectHeader().value("Location", endsWith("/events"));
 		
 		assertThat(numRows, equalTo(countRowsInTable("events")));
+	}
+	@Test
+	public void addEventWithAuthenticationTest() {
+		String[] tokens = login();
+
+		MultiValueMap<String, String> form = new LinkedMultiValueMap<>();
+		form.add("_csrf", tokens[0]);
+		form.add("name", "Test event");
+		form.add("venue.id", "2");	// This venue (with id 2) must exist in the db
+		form.add("date", "2022-03-01");
+		
+		// Time and description are optional
+		form.add("time", "");
+		form.add("description", "Something here");
+		
+		// Session ID cookie holds login credentials.
+		client.post().uri("/events/eventSubmit").accept(MediaType.TEXT_HTML).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.bodyValue(form).cookies(cookies -> {
+					cookies.add(SESSION_KEY, tokens[1]);
+				}).exchange().expectStatus().isFound().expectHeader().value("Location", endsWith("/events"));
+		
+		assertThat(numRows+1, equalTo(countRowsInTable("events"))); //causes a successful add, so add 1
 	}
 	
 	@Test
@@ -149,6 +191,29 @@ public class EventsControllerIntegrationTest extends AbstractTransactionalJUnit4
 		
 		assertThat(numRows, equalTo(countRowsInTable("events")));
 	}
+	@Test
+	public void addEventNoNameTest() {
+		String[] tokens = login();
+
+		MultiValueMap<String, String> form = new LinkedMultiValueMap<>();
+		form.add("_csrf", tokens[0]);
+		form.add("name", "");
+		form.add("venue.id", "2");	// This venue (with id 2) must exist in the db
+		form.add("date", "2022-03-01");
+		
+		// Time and description are optional
+		form.add("time", "");
+		form.add("description", "");
+		
+		// Session ID cookie holds login credentials.
+		client.post().uri("/events/eventSubmit").accept(MediaType.TEXT_HTML).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.bodyValue(form).cookies(cookies -> {
+					cookies.add(SESSION_KEY, tokens[1]);
+				}).exchange().expectStatus().isOk();
+		
+		assertThat(numRows, equalTo(countRowsInTable("events")));
+	}
+	
 	
 	@Test
 	public void updateEventBadNameTest() {
@@ -168,6 +233,29 @@ public class EventsControllerIntegrationTest extends AbstractTransactionalJUnit4
 		
 		// Session ID cookie holds login credentials.
 		client.post().uri("/events/updateEvent").accept(MediaType.TEXT_HTML).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.bodyValue(form).cookies(cookies -> {
+					cookies.add(SESSION_KEY, tokens[1]);
+				}).exchange().expectStatus().isOk();
+		
+		assertThat(numRows, equalTo(countRowsInTable("events")));
+	}
+	@Test
+	public void addEventBadNameTest() {
+		String[] tokens = login();
+
+		MultiValueMap<String, String> form = new LinkedMultiValueMap<>();
+		form.add("_csrf", tokens[0]);
+		form.add("name", "A very long name meant to exceed the limit ....... A very long name meant to exceed the limit ....... A very long name meant to exceed the limit ....... A very long name meant to exceed the limit ....... A very long name meant to exceed the limit ....... "
+				+ "A very long name meant to exceed the limit ....... A very long name meant to exceed the limit ....... A very long name meant to exceed the limit ....... ");
+		form.add("venue.id", "2");	// This venue (with id 2) must exist in the db
+		form.add("date", "2022-03-01");
+		
+		// Time and description are optional
+		form.add("time", "");
+		form.add("description", "");
+		
+		// Session ID cookie holds login credentials.
+		client.post().uri("/events/eventSubmit").accept(MediaType.TEXT_HTML).contentType(MediaType.APPLICATION_FORM_URLENCODED)
 				.bodyValue(form).cookies(cookies -> {
 					cookies.add(SESSION_KEY, tokens[1]);
 				}).exchange().expectStatus().isOk();
@@ -198,6 +286,28 @@ public class EventsControllerIntegrationTest extends AbstractTransactionalJUnit4
 		
 		assertThat(numRows, equalTo(countRowsInTable("events")));
 	}
+	@Test
+	public void addEventNoDateTest() {
+		String[] tokens = login();
+
+		MultiValueMap<String, String> form = new LinkedMultiValueMap<>();
+		form.add("_csrf", tokens[0]);
+		form.add("name", "Testing...");
+		form.add("venue.id", "2");	// This venue (with id 2) must exist in the db
+		form.add("date", "");
+		
+		// Time and description are optional
+		form.add("time", "");
+		form.add("description", "");
+		
+		// Session ID cookie holds login credentials.
+		client.post().uri("/events/eventSubmit").accept(MediaType.TEXT_HTML).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.bodyValue(form).cookies(cookies -> {
+					cookies.add(SESSION_KEY, tokens[1]);
+				}).exchange().expectStatus().isOk();
+		
+		assertThat(numRows, equalTo(countRowsInTable("events")));
+	}
 	
 	@Test
 	public void updateEventBadDateTest() {
@@ -216,6 +326,28 @@ public class EventsControllerIntegrationTest extends AbstractTransactionalJUnit4
 		
 		// Session ID cookie holds login credentials.
 		client.post().uri("/events/updateEvent").accept(MediaType.TEXT_HTML).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.bodyValue(form).cookies(cookies -> {
+					cookies.add(SESSION_KEY, tokens[1]);
+				}).exchange().expectStatus().isOk();
+		
+		assertThat(numRows, equalTo(countRowsInTable("events")));
+	}
+	@Test
+	public void addEventBadDateTest() {
+		String[] tokens = login();
+
+		MultiValueMap<String, String> form = new LinkedMultiValueMap<>();
+		form.add("_csrf", tokens[0]);
+		form.add("name", "Testing...");
+		form.add("venue.id", "2");	// This venue (with id 2) must exist in the db
+		form.add("date", "2020-03-01"); // Date in the past
+		
+		// Time and description are optional
+		form.add("time", "");
+		form.add("description", "");
+		
+		// Session ID cookie holds login credentials.
+		client.post().uri("/events/eventSubmit").accept(MediaType.TEXT_HTML).contentType(MediaType.APPLICATION_FORM_URLENCODED)
 				.bodyValue(form).cookies(cookies -> {
 					cookies.add(SESSION_KEY, tokens[1]);
 				}).exchange().expectStatus().isOk();
@@ -246,6 +378,28 @@ public class EventsControllerIntegrationTest extends AbstractTransactionalJUnit4
 		
 		assertThat(numRows, equalTo(countRowsInTable("events")));
 	}
+	@Test
+	public void addEventNoVenueTest() {
+		String[] tokens = login();
+
+		MultiValueMap<String, String> form = new LinkedMultiValueMap<>();
+		form.add("_csrf", tokens[0]);
+		form.add("name", "Testing...");
+		form.add("venue.id", "");	// Not specified
+		form.add("date", "2020-03-01"); // Date in the past
+		
+		// Time and description are optional
+		form.add("time", "");
+		form.add("description", "");
+		
+		// Session ID cookie holds login credentials.
+		client.post().uri("/events/eventSubmit").accept(MediaType.TEXT_HTML).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.bodyValue(form).cookies(cookies -> {
+					cookies.add(SESSION_KEY, tokens[1]);
+				}).exchange().expectStatus().isOk();
+		
+		assertThat(numRows, equalTo(countRowsInTable("events")));
+	}
 	
 	@Test
 	public void updateEventNonExistentVenueTest() {
@@ -264,6 +418,28 @@ public class EventsControllerIntegrationTest extends AbstractTransactionalJUnit4
 		
 		// Session ID cookie holds login credentials.
 		client.post().uri("/events/updateEvent").accept(MediaType.TEXT_HTML).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.bodyValue(form).cookies(cookies -> {
+					cookies.add(SESSION_KEY, tokens[1]);
+				}).exchange().expectStatus().isOk();
+		
+		assertThat(numRows, equalTo(countRowsInTable("events")));
+	}
+	@Test
+	public void addEventNonExistentVenueTest() {
+		String[] tokens = login();
+
+		MultiValueMap<String, String> form = new LinkedMultiValueMap<>();
+		form.add("_csrf", tokens[0]);
+		form.add("name", "Testing...");
+		form.add("venue.id", "1001001001");	// Non-existent venue
+		form.add("date", "2020-03-01"); // Date in the past
+		
+		// Time and description are optional
+		form.add("time", "");
+		form.add("description", "");
+		
+		// Session ID cookie holds login credentials.
+		client.post().uri("/events/eventSubmit").accept(MediaType.TEXT_HTML).contentType(MediaType.APPLICATION_FORM_URLENCODED)
 				.bodyValue(form).cookies(cookies -> {
 					cookies.add(SESSION_KEY, tokens[1]);
 				}).exchange().expectStatus().isOk();
@@ -292,6 +468,32 @@ public class EventsControllerIntegrationTest extends AbstractTransactionalJUnit4
 		
 		// Session ID cookie holds login credentials.
 		client.post().uri("/events/updateEvent").accept(MediaType.TEXT_HTML).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.bodyValue(form).cookies(cookies -> {
+					cookies.add(SESSION_KEY, tokens[1]);
+				}).exchange().expectStatus().isOk();
+		
+		assertThat(numRows, equalTo(countRowsInTable("events")));
+	}
+	@Test
+	public void addEventBadDescription() {
+		String[] tokens = login();
+
+		MultiValueMap<String, String> form = new LinkedMultiValueMap<>();
+		form.add("_csrf", tokens[0]);
+		form.add("name", "New name..");
+		form.add("venue.id", "2");	// This venue (with id 2) must exist in the db
+		form.add("date", "2022-03-01");
+		
+		// Time is optional
+		form.add("time", "");
+		
+		// Description is over 500 chars long
+		form.add("description", "A very long string meant to exceed the limit ....... A very long name meant to exceed the limit ....... A very long name meant to exceed the limit ....... A very long name meant to exceed the limit ....... A very long name meant to exceed the limit ....... "
+				+ "A very long string meant to exceed the limit ....... A very long name meant to exceed the limit ....... A very long name meant to exceed the limit ....... A very long name meant to exceed the limit ....... A very long name meant to exceed the limit ....... "
+				+ "A very long string meant to exceed the limit ....... A very long name meant to exceed the limit ....... A very long name meant to exceed the limit ....... A very long name meant to exceed the limit ....... A very long name meant to exceed the limit ....... ");
+		
+		// Session ID cookie holds login credentials.
+		client.post().uri("/events/eventSubmit").accept(MediaType.TEXT_HTML).contentType(MediaType.APPLICATION_FORM_URLENCODED)
 				.bodyValue(form).cookies(cookies -> {
 					cookies.add(SESSION_KEY, tokens[1]);
 				}).exchange().expectStatus().isOk();

@@ -71,6 +71,23 @@ public class VenuesControllerIntegrationTest extends AbstractTransactionalJUnit4
 		
 		assertThat(numRows, equalTo(countRowsInTable("venues")));
 	}
+	@Test
+	public void addVenueNoAuthenticationTest() {
+		String[] tokens = login();
+
+		MultiValueMap<String, String> form = new LinkedMultiValueMap<>();
+		form.add("_csrf", tokens[0]);
+		form.add("name", "My venue");
+		form.add("address", "my address");
+		form.add("postcode", "M13 9PL");
+		form.add("capacity", "100");
+		
+		client.post().uri("/venues/venueSubmit").accept(MediaType.TEXT_HTML).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.bodyValue(form).exchange().expectStatus().isFound().expectHeader()
+				.value("Location", endsWith("/sign-in"));
+		
+		assertThat(numRows, equalTo(countRowsInTable("venues")));
+	}
 	
 	@Test
 	public void updateVenueWithAuthenticationTest() {
@@ -91,6 +108,25 @@ public class VenuesControllerIntegrationTest extends AbstractTransactionalJUnit4
 				}).exchange().expectStatus().isFound().expectHeader().value("Location", endsWith("/venues"));
 		
 		assertThat(numRows, equalTo(countRowsInTable("venues")));
+	}
+	@Test
+	public void addVenueWithAuthenticationTest() {
+		String[] tokens = login();
+
+		MultiValueMap<String, String> form = new LinkedMultiValueMap<>();
+		form.add("_csrf", tokens[0]);
+		form.add("name", "My venue");
+		form.add("address", "my address");
+		form.add("postcode", "M13 9PL");
+		form.add("capacity", "100");
+		
+		// Session ID cookie holds login credentials.
+		client.post().uri("/venues/venueSubmit").accept(MediaType.TEXT_HTML).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.bodyValue(form).cookies(cookies -> {
+					cookies.add(SESSION_KEY, tokens[1]);
+				}).exchange().expectStatus().isFound().expectHeader().value("Location", endsWith("/events"));
+		
+		assertThat(numRows+1, equalTo(countRowsInTable("venues")));
 	}
 	
 	@Test
@@ -134,6 +170,25 @@ public class VenuesControllerIntegrationTest extends AbstractTransactionalJUnit4
 		
 		assertThat(numRows, equalTo(countRowsInTable("venues")));
 	}
+	@Test
+	public void addVenueNoName() {
+		String[] tokens = login();
+
+		MultiValueMap<String, String> form = new LinkedMultiValueMap<>();
+		form.add("_csrf", tokens[0]);
+		form.add("name", "");
+		form.add("address", "my address");
+		form.add("postcode", "M13 9PL");
+		form.add("capacity", "100");
+		
+		// Session ID cookie holds login credentials.
+		client.post().uri("/venues/venueSubmit").accept(MediaType.TEXT_HTML).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.bodyValue(form).cookies(cookies -> {
+					cookies.add(SESSION_KEY, tokens[1]);
+				}).exchange().expectStatus().isOk();
+		
+		assertThat(numRows, equalTo(countRowsInTable("venues")));
+	}
 	
 	@Test
 	public void updateVenueBadName() {
@@ -156,6 +211,26 @@ public class VenuesControllerIntegrationTest extends AbstractTransactionalJUnit4
 		
 		assertThat(numRows, equalTo(countRowsInTable("venues")));
 	}
+	@Test
+	public void addVenueBadName() {
+		String[] tokens = login();
+
+		MultiValueMap<String, String> form = new LinkedMultiValueMap<>();
+		form.add("_csrf", tokens[0]);
+		form.add("name", "A very long string meant to exceed the limit .......  A very long string meant to exceed the limit .......  A very long string meant to exceed the limit ....... "
+				+ "A very long string meant to exceed the limit .......  A very long string meant to exceed the limit .......  A very long string meant to exceed the limit ....... ");
+		form.add("address", "my address");
+		form.add("postcode", "M13 9PL");
+		form.add("capacity", "100");
+		
+		// Session ID cookie holds login credentials.
+		client.post().uri("/venues/venueSubmit").accept(MediaType.TEXT_HTML).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.bodyValue(form).cookies(cookies -> {
+					cookies.add(SESSION_KEY, tokens[1]);
+				}).exchange().expectStatus().isOk();
+		
+		assertThat(numRows, equalTo(countRowsInTable("venues")));
+	}
 	
 	@Test
 	public void updateVenueNoAddress() {
@@ -171,6 +246,25 @@ public class VenuesControllerIntegrationTest extends AbstractTransactionalJUnit4
 		
 		// Session ID cookie holds login credentials.
 		client.post().uri("/venues/updateVenue").accept(MediaType.TEXT_HTML).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.bodyValue(form).cookies(cookies -> {
+					cookies.add(SESSION_KEY, tokens[1]);
+				}).exchange().expectStatus().isOk();
+		
+		assertThat(numRows, equalTo(countRowsInTable("venues")));
+	}
+	@Test
+	public void addVenueNoAddress() {
+		String[] tokens = login();
+
+		MultiValueMap<String, String> form = new LinkedMultiValueMap<>();
+		form.add("_csrf", tokens[0]);
+		form.add("name", "My venue");
+		form.add("address", "");
+		form.add("postcode", "M13 9PL");
+		form.add("capacity", "100");
+		
+		// Session ID cookie holds login credentials.
+		client.post().uri("/venues/venueSubmit").accept(MediaType.TEXT_HTML).contentType(MediaType.APPLICATION_FORM_URLENCODED)
 				.bodyValue(form).cookies(cookies -> {
 					cookies.add(SESSION_KEY, tokens[1]);
 				}).exchange().expectStatus().isOk();
@@ -199,6 +293,26 @@ public class VenuesControllerIntegrationTest extends AbstractTransactionalJUnit4
 		
 		assertThat(numRows, equalTo(countRowsInTable("venues")));
 	}
+	@Test
+	public void addVenueBadAddress() {
+		String[] tokens = login();
+
+		MultiValueMap<String, String> form = new LinkedMultiValueMap<>();
+		form.add("_csrf", tokens[0]);
+		form.add("name", "My venue");
+		form.add("address", "A very long string meant to exceed the limit ....... A very long string meant to exceed the limit ....... A very long string meant to exceed the limit ......."
+				+ "A very long string meant to exceed the limit ....... A very long string meant to exceed the limit ....... A very long string meant to exceed the limit .......");
+		form.add("postcode", "M13 9PL");
+		form.add("capacity", "100");
+		
+		// Session ID cookie holds login credentials.
+		client.post().uri("/venues/venueSubmit").accept(MediaType.TEXT_HTML).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.bodyValue(form).cookies(cookies -> {
+					cookies.add(SESSION_KEY, tokens[1]);
+				}).exchange().expectStatus().isOk();
+		
+		assertThat(numRows, equalTo(countRowsInTable("venues")));
+	}
 	
 	@Test
 	public void updateVenueNoPostcode() {
@@ -214,6 +328,25 @@ public class VenuesControllerIntegrationTest extends AbstractTransactionalJUnit4
 		
 		// Session ID cookie holds login credentials.
 		client.post().uri("/venues/updateVenue").accept(MediaType.TEXT_HTML).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.bodyValue(form).cookies(cookies -> {
+					cookies.add(SESSION_KEY, tokens[1]);
+				}).exchange().expectStatus().isOk();
+		
+		assertThat(numRows, equalTo(countRowsInTable("venues")));
+	}
+	@Test
+	public void addVenueNoPostcode() {
+		String[] tokens = login();
+
+		MultiValueMap<String, String> form = new LinkedMultiValueMap<>();
+		form.add("_csrf", tokens[0]);
+		form.add("name", "My venue");
+		form.add("address", "my address");
+		form.add("postcode", "");
+		form.add("capacity", "100");
+		
+		// Session ID cookie holds login credentials.
+		client.post().uri("/venues/venueSubmit").accept(MediaType.TEXT_HTML).contentType(MediaType.APPLICATION_FORM_URLENCODED)
 				.bodyValue(form).cookies(cookies -> {
 					cookies.add(SESSION_KEY, tokens[1]);
 				}).exchange().expectStatus().isOk();
@@ -241,6 +374,25 @@ public class VenuesControllerIntegrationTest extends AbstractTransactionalJUnit4
 		
 		assertThat(numRows, equalTo(countRowsInTable("venues")));
 	}
+	@Test
+	public void addVenueBadCapacity() {
+		String[] tokens = login();
+
+		MultiValueMap<String, String> form = new LinkedMultiValueMap<>();
+		form.add("_csrf", tokens[0]);
+		form.add("name", "My venue");
+		form.add("address", "my address");
+		form.add("postcode", "M13 9PL");
+		form.add("capacity", "100.012");	// Floating point number
+		
+		// Session ID cookie holds login credentials.
+		client.post().uri("/venues/venueSubmit").accept(MediaType.TEXT_HTML).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.bodyValue(form).cookies(cookies -> {
+					cookies.add(SESSION_KEY, tokens[1]);
+				}).exchange().expectStatus().isOk();
+		
+		assertThat(numRows, equalTo(countRowsInTable("venues")));
+	}
 	
 	@Test
 	public void updateVenueBadCapacity2() {
@@ -256,6 +408,25 @@ public class VenuesControllerIntegrationTest extends AbstractTransactionalJUnit4
 		
 		// Session ID cookie holds login credentials.
 		client.post().uri("/venues/updateVenue").accept(MediaType.TEXT_HTML).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.bodyValue(form).cookies(cookies -> {
+					cookies.add(SESSION_KEY, tokens[1]);
+				}).exchange().expectStatus().isOk();
+		
+		assertThat(numRows, equalTo(countRowsInTable("venues")));
+	}
+	@Test
+	public void addVenueBadCapacity2() {
+		String[] tokens = login();
+
+		MultiValueMap<String, String> form = new LinkedMultiValueMap<>();
+		form.add("_csrf", tokens[0]);
+		form.add("name", "My venue");
+		form.add("address", "my address");
+		form.add("postcode", "M13 9PL");
+		form.add("capacity", "-10");	// Negative number
+		
+		// Session ID cookie holds login credentials.
+		client.post().uri("/venues/venueSubmit").accept(MediaType.TEXT_HTML).contentType(MediaType.APPLICATION_FORM_URLENCODED)
 				.bodyValue(form).cookies(cookies -> {
 					cookies.add(SESSION_KEY, tokens[1]);
 				}).exchange().expectStatus().isOk();
