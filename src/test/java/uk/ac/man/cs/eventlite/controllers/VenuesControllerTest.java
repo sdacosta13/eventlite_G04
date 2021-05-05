@@ -27,6 +27,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
 
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(VenuesController.class)
@@ -78,12 +79,13 @@ public class VenuesControllerTest {
 	
 	@Test
 	public void updateVenueWithAuthentication() throws Exception {
-		ArgumentCaptor<Venue> arg = ArgumentCaptor.forClass(Venue.class);
+		when(venueService.findById(1111)).thenReturn(venue);
 		
 		// All parameters satisfy the constraints
 		mvc.perform(post("/venues/updateVenue").with(user("Rob").roles(Security.ADMIN_ROLE))
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
 				.with(csrf())
+				.param("id", "1111")
 				.param("name", "NASA")
 				.param("address", "NASA address")
 				.param("postcode", "123456")
@@ -95,16 +97,38 @@ public class VenuesControllerTest {
 				.andExpect(handler().methodName("updateVenue"))
 				.andExpect(flash().attributeExists("ok_message"));
 		
-		verify(venueService).save(arg.capture());
+		verify(venueService).save(any());
+	}
+	
+	@Test
+	public void updateNonExistentVenueWithAuthentication() throws Exception {
+		when(venueService.findById(1111)).thenReturn(venue);
+		
+		// All parameters satisfy the constraints
+		mvc.perform(post("/venues/updateVenue").with(user("Rob").roles(Security.ADMIN_ROLE))
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+				.with(csrf())
+				.param("id", "2222")
+				.param("name", "NASA")
+				.param("address", "NASA address")
+				.param("postcode", "123456")
+				.param("capacity", "10000")
+				.accept(MediaType.TEXT_HTML))
+				.andExpect(view().name("redirect:/venues"))
+				.andExpect(flash().attributeExists("bad_message"));
+		
+		verify(venueService, never()).save(any());
 	}
 	
 	@Test
 	public void updateWithAuthenticationBadCapacity() throws Exception {
+		when(venueService.findById(1111)).thenReturn(venue);
 		
 		// 0 as capacity
 		mvc.perform(post("/venues/updateVenue").with(user("Rob").roles(Security.ADMIN_ROLE))
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
 				.with(csrf())
+				.param("id", "1111")
 				.param("name", "NASA")
 				.param("address", "NASA address")
 				.param("postcode", "123456")
@@ -115,10 +139,13 @@ public class VenuesControllerTest {
 				.andExpect(model().hasErrors())
 				.andExpect(handler().methodName("updateVenue"));
 		
+		verify(venueService, never()).save(any());
+		
 		// Negative number
 		mvc.perform(post("/venues/updateVenue").with(user("Rob").roles(Security.ADMIN_ROLE))
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
 				.with(csrf())
+				.param("id", "1111")
 				.param("name", "NASA")
 				.param("address", "NASA address")
 				.param("postcode", "123456")
@@ -129,10 +156,13 @@ public class VenuesControllerTest {
 				.andExpect(model().hasErrors())
 				.andExpect(handler().methodName("updateVenue"));
 		
+		verify(venueService, never()).save(any());
+		
 		// Floating-point number
 		mvc.perform(post("/venues/updateVenue").with(user("Rob").roles(Security.ADMIN_ROLE))
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
 				.with(csrf())
+				.param("id", "1111")
 				.param("name", "NASA")
 				.param("address", "NASA address")
 				.param("postcode", "123456")
@@ -143,10 +173,13 @@ public class VenuesControllerTest {
 				.andExpect(model().hasErrors())
 				.andExpect(handler().methodName("updateVenue"));
 		
+		verify(venueService, never()).save(any());
+		
 		// No capacity
 		mvc.perform(post("/venues/updateVenue").with(user("Rob").roles(Security.ADMIN_ROLE))
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
 				.with(csrf())
+				.param("id", "1111")
 				.param("name", "NASA")
 				.param("address", "NASA address")
 				.param("postcode", "123456")
@@ -156,13 +189,18 @@ public class VenuesControllerTest {
 				.andExpect(view().name("venues/updateVenue"))
 				.andExpect(model().hasErrors())
 				.andExpect(handler().methodName("updateVenue"));
+		
+		verify(venueService, never()).save(any());
 	}
 	
 	@Test
 	public void updateWithAuthenticationNoName() throws Exception {
+		when(venueService.findById(1111)).thenReturn(venue);
+		
 		mvc.perform(post("/venues/updateVenue").with(user("Rob").roles(Security.ADMIN_ROLE))
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
 				.with(csrf())
+				.param("id", "1111")
 				.param("name", "")
 				.param("address", "address")
 				.param("postcode", "123456")
@@ -172,13 +210,18 @@ public class VenuesControllerTest {
 				.andExpect(view().name("venues/updateVenue"))
 				.andExpect(model().hasErrors())
 				.andExpect(handler().methodName("updateVenue"));
+		
+		verify(venueService, never()).save(any());
 	}
 	
 	@Test
 	public void updateWithAuthenticationNoAddress() throws Exception {
+		when(venueService.findById(1111)).thenReturn(venue);
+		
 		mvc.perform(post("/venues/updateVenue").with(user("Rob").roles(Security.ADMIN_ROLE))
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
 				.with(csrf())
+				.param("id", "1111")
 				.param("name", "NASA")
 				.param("address", "")
 				.param("postcode", "123456")
@@ -188,13 +231,18 @@ public class VenuesControllerTest {
 				.andExpect(view().name("venues/updateVenue"))
 				.andExpect(model().hasErrors())
 				.andExpect(handler().methodName("updateVenue"));
+		
+		verify(venueService, never()).save(any());
 	}
 	
 	@Test
 	public void updateWithAuthenticationNoPostCode() throws Exception {
+		when(venueService.findById(1111)).thenReturn(venue);
+		
 		mvc.perform(post("/venues/updateVenue").with(user("Rob").roles(Security.ADMIN_ROLE))
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
 				.with(csrf())
+				.param("id", "1111")
 				.param("name", "NASA")
 				.param("address", "NASA address")
 				.param("postcode", "")
@@ -204,6 +252,8 @@ public class VenuesControllerTest {
 				.andExpect(view().name("venues/updateVenue"))
 				.andExpect(model().hasErrors())
 				.andExpect(handler().methodName("updateVenue"));
+		
+		verify(venueService, never()).save(any());
 	}
 
 	@Test
