@@ -89,6 +89,7 @@ public class VenuesController {
 			return "redirect:/venues/addVenue/";
 		}
 		venueService.save(venue);
+		redirectAttrs.addFlashAttribute("ok_message", "Venue created successfuly.");
 		return "redirect:/events";
 	}
 
