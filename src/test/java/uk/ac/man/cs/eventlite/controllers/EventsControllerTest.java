@@ -126,7 +126,7 @@ public class EventsControllerTest {
 				.andExpect(status().isFound())
 				.andExpect(header().string("Location", endsWith("/sign-in")));
 		
-		verify(eventService, never()).save(event);
+		verify(eventService, never()).save(any());
 		verifyNoInteractions(event);
 	}
 	
@@ -165,8 +165,9 @@ public class EventsControllerTest {
 				.param("venue.id", String.valueOf(venue.getId()))
 				.param("description", "")
 				.accept(MediaType.TEXT_HTML))
+				.andExpect(status().isFound())
 				.andExpect(view().name("redirect:/events"))
-				.andExpect(flash().attributeExists("bad_message"));
+				.andExpect(flash().attributeExists("error_message"));
 
 		verify(eventService, never()).save(any());
 	}
@@ -187,7 +188,7 @@ public class EventsControllerTest {
 				.accept(MediaType.TEXT_HTML))
 				.andExpect(status().isFound())
 				.andExpect(view().name("redirect:/events/updateEvent"))
-				.andExpect(flash().attributeExists("bad_message"));
+				.andExpect(flash().attributeExists("error_message"));
 
 		verify(eventService, never()).save(any());
 	}

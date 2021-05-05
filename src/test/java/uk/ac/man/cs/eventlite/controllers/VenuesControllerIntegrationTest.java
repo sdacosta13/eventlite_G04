@@ -184,7 +184,7 @@ public class VenuesControllerIntegrationTest extends AbstractTransactionalJUnit4
 		client.post().uri("/venues/updateVenue").accept(MediaType.TEXT_HTML).contentType(MediaType.APPLICATION_FORM_URLENCODED)
 				.bodyValue(form).cookies(cookies -> {
 					cookies.add(SESSION_KEY, tokens[1]);
-				}).exchange().expectHeader().value("Location", endsWith("/venues"));
+				}).exchange().expectStatus().isFound().expectHeader().value("Location", endsWith("/venues"));
 		
 		assertThat(numRows, equalTo(countRowsInTable("venues")));
 	}

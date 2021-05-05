@@ -204,7 +204,7 @@ public class EventsControllerIntegrationTest extends AbstractTransactionalJUnit4
 		client.post().uri("/events/updateEvent").accept(MediaType.TEXT_HTML).contentType(MediaType.APPLICATION_FORM_URLENCODED)
 				.bodyValue(form).cookies(cookies -> {
 					cookies.add(SESSION_KEY, tokens[1]);
-				}).exchange().expectHeader().value("Location", endsWith("/events"));
+				}).exchange().expectStatus().isFound().expectHeader().value("Location", endsWith("/events"));
 		
 		// The controller will just redirect to the events page
 		// if non-existing event is requested to be updated

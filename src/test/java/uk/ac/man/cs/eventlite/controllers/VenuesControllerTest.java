@@ -74,7 +74,7 @@ public class VenuesControllerTest {
 				.andExpect(status().isFound())
 				.andExpect(header().string("Location", endsWith("/sign-in")));
 		
-		verify(venueService, never()).save(venue);
+		verify(venueService, never()).save(any());
 	}
 	
 	@Test
@@ -114,8 +114,9 @@ public class VenuesControllerTest {
 				.param("postcode", "123456")
 				.param("capacity", "10000")
 				.accept(MediaType.TEXT_HTML))
+				.andExpect(status().isFound())
 				.andExpect(view().name("redirect:/venues"))
-				.andExpect(flash().attributeExists("bad_message"));
+				.andExpect(flash().attributeExists("error_message"));
 		
 		verify(venueService, never()).save(any());
 	}
