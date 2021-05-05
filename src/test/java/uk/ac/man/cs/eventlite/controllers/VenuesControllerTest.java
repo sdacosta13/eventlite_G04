@@ -25,7 +25,6 @@ import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.mockito.ArgumentMatchers.any;
 
@@ -65,6 +64,28 @@ public class VenuesControllerTest {
 
 		verify(venueService).findAll();
 		verify(venue).getName();
+	}
+	
+	@Test
+	public void getVenueForUpdateTest() throws Exception {
+		when(venueService.findVenueById(8888)).thenReturn(Optional.of(venue));
+		
+		mvc.perform(get("/venues/updateVenue/8888").contentType(MediaType.TEXT_HTML))
+				.andExpect(status().isOk())
+				.andExpect(view().name("venues/updateVenue"))
+				.andExpect(handler().methodName("getVenueById"));
+		
+		verify(venueService).findVenueById(8888);
+	}
+	
+	@Test
+	public void getNonExistentVenueForUpdateTest() throws Exception {
+		mvc.perform(get("/venues/updateVenue/8888").contentType(MediaType.TEXT_HTML))
+				.andExpect(status().isFound())
+				.andExpect(view().name("redirect:/venues"))
+				.andExpect(handler().methodName("getVenueById"));
+		
+		verify(venueService).findVenueById(8888);
 	}
 	
 	@Test
