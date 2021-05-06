@@ -72,6 +72,46 @@ public class VenuesControllerApiTest {
 	}
 
 	@Test
+	public void getVenueNotFound() throws Exception {
+		long id = 666;
+
+		when(venueService.findVenueById(id)).thenReturn(Optional.empty());
+
+		mvc.perform(get("/api/venues/" + id)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNoContent());
+
+		verify(venueService).findVenueById(id);
+	}
+
+	@Test
+	public void getVenue() throws Exception {
+		long id = 666;
+
+		Venue v = new Venue();
+		v.setId(id);
+		v.setName("Venue");
+		v.setAddress("localhost");
+		v.setPostcode("1337");
+		v.setCapacity(100);
+
+		when(venueService.findVenueById(id)).thenReturn(Optional.of(v));
+
+		mvc.perform(get("/api/venues/" + id)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk())
+				.andExpect(handler().methodName("getVenue"))
+				.andExpect(jsonPath("$.name", equalTo(v.getName())))
+				.andExpect(jsonPath("$.capacity", equalTo(v.getCapacity())))
+				.andExpect(jsonPath("$._links.self.href", endsWith("/api/venues/" + id)))
+				.andExpect(jsonPath("$._links.venue.href", endsWith("/api/venues/" + id)))
+				.andExpect(jsonPath("$._links.events.href", endsWith("/api/venues/" + id + "/events")))
+				.andExpect(jsonPath("$._links.next3events.href", endsWith("/api/venues/" + id + "/next3events")));
+
+		verify(venueService).findVenueById(id);
+	}
+
+	@Test
 	public void deleteVenueNoAuth() throws Exception {
 		long id = 666;
 
