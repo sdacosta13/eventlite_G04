@@ -15,7 +15,10 @@
 	    </div>
 	    <button type="submit" class="btn btn-default">Search</button>
 	  </form>
-  
+	  <td sec:authorize="isAuthenticated()">
+	  	<a href="venues/addVenue"><button class="btn btn-info">Add Venue</button></a>
+  	  </td>
+  		
       <h2 class="mb-2">All venues</h2>
       <table class="table table-striped table-hover">
           <thead>
