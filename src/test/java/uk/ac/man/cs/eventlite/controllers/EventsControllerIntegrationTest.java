@@ -98,6 +98,46 @@ public class EventsControllerIntegrationTest extends AbstractTransactionalJUnit4
 	}
 	
 	@Test
+	public void testDeleteEvent() {
+		assertThat(1, equalTo(countRowsInTableWhere("events", "id = 4")));
+		String[] tokens = login();
+		
+		client.delete().uri("/events/4").accept(MediaType.TEXT_HTML).header("X-CSRF-TOKEN", tokens[0]).cookies(cookies -> {
+			cookies.add(SESSION_KEY, tokens[1]);
+		})
+		.exchange().expectStatus().isFound().expectHeader()
+		.value("Location", endsWith("/events"));
+		
+		assertThat(0, equalTo(countRowsInTableWhere("events", "id = 4")));
+	}
+	
+	@Test
+	public void testDeleteEventNoAuthentication() {
+		assertThat(1, equalTo(countRowsInTableWhere("events", "id = 4")));
+		String[] tokens = login();
+		
+		client.delete().uri("/events/4").accept(MediaType.TEXT_HTML).header("X-CSRF-TOKEN", tokens[0])
+		.exchange().expectStatus().isFound().expectHeader()
+		.value("Location", endsWith("/sign-in"));
+		
+		assertThat(1, equalTo(countRowsInTableWhere("events", "id = 4")));
+	}
+	
+	@Test
+	public void testDeleteNonExistingEvent() {
+		assertThat(0, equalTo(countRowsInTableWhere("events", "id = 31231231")));
+		String[] tokens = login();
+		
+		client.delete().uri("/events/31231231").accept(MediaType.TEXT_HTML).header("X-CSRF-TOKEN", tokens[0]).cookies(cookies -> {
+			cookies.add(SESSION_KEY, tokens[1]);
+		})
+		.exchange().expectStatus().isFound().expectHeader()
+		.value("Location", endsWith("/events"));
+		
+		assertThat(numRows, equalTo(countRowsInTable("events")));
+	}
+	
+	@Test
 	public void updateEventNoAuthenticationTest() {
 		String[] tokens = login();
 
