@@ -90,6 +90,14 @@ public class InitialDataLoader implements ApplicationListener<ContextRefreshedEv
 		eventService.save(event1);
 		eventService.save(event2);
 		eventService.save(event3);
+		
+		Venue venue4 = new Venue();
+		venue4.setName("Disney");
+		venue4.setAddress("Defense Pentagon Washington, DC");
+		venue4.setPostcode("20301-1100");
+		venue4.setCapacity(10000);
+		venue4.setCoords();
+		venueService.save(venue4);
 
 	}
 }
