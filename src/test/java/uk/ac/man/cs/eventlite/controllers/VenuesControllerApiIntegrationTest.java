@@ -40,7 +40,7 @@ public class VenuesControllerApiIntegrationTest extends AbstractTransactionalJUn
 	public void testGetAllEvents() {
 		client.get().uri("/venues").accept(MediaType.APPLICATION_JSON).exchange().expectStatus().isOk().expectHeader()
 				.contentType(MediaType.APPLICATION_JSON).expectBody().jsonPath("$._links.self.href")
-				.value(endsWith("/api/venues")).jsonPath("$._embedded.venues.length()").value(equalTo(3));
+				.value(endsWith("/api/venues")).jsonPath("$._embedded.venues.length()").value(equalTo(4));
 	}
 	@Test
 	public void getVenueTest() throws Exception {
