@@ -99,6 +99,7 @@ public class EventsControllerTest {
 
 	@Test
 	public void deleteEventNoAuth() throws Exception {
+		when(eventService.findEventById(666)).thenReturn(Optional.of(event));
 		mvc.perform(delete("/events/666")
 				.accept(MediaType.TEXT_HTML)
 				.with(csrf()))
@@ -110,6 +111,7 @@ public class EventsControllerTest {
 
 	@Test
 	public void deleteEvent() throws Exception {
+		when(eventService.findEventById(666)).thenReturn(Optional.of(event));
 		mvc.perform(delete("/events/666")
 				.accept(MediaType.TEXT_HTML)
 				.with(user("Rob").roles(Security.ADMIN_ROLE))
