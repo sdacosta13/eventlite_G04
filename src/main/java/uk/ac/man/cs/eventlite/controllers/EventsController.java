@@ -104,6 +104,11 @@ public class EventsController {
 	}
 	@DeleteMapping("/{eventId}")
 	public String deleteEvent(@PathVariable long eventId, RedirectAttributes redirectAttrs) {
+		Optional<Event> e = eventService.findEventById(eventId);
+		if (e.isEmpty()) {
+			redirectAttrs.addFlashAttribute("error_message", "Event doesn't exist anymore!");
+			return "redirect:/events";
+		}
 		eventService.deleteById(eventId);
 		redirectAttrs.addFlashAttribute("ok_message", "Event deleted.");
 		return "redirect:/events";

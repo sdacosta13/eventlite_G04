@@ -93,6 +93,60 @@ public class VenuesControllerIntegrationTest extends AbstractTransactionalJUnit4
 	}
 	
 	@Test
+	public void testDeleteVenue() {
+		assertThat(1, equalTo(countRowsInTableWhere("venues", "id = 7")));
+		String[] tokens = login();
+		
+		client.delete().uri("/venues/7").accept(MediaType.TEXT_HTML).header("X-CSRF-TOKEN", tokens[0]).cookies(cookies -> {
+			cookies.add(SESSION_KEY, tokens[1]);
+		})
+		.exchange().expectStatus().isFound().expectHeader()
+		.value("Location", endsWith("/venues"));
+		
+		assertThat(0, equalTo(countRowsInTableWhere("venues", "id = 7")));
+	}
+	
+	@Test
+	public void testDeleteVenueWithEvents() {
+		assertThat(1, equalTo(countRowsInTableWhere("venues", "id = 1")));
+		String[] tokens = login();
+		
+		client.delete().uri("/venues/1").accept(MediaType.TEXT_HTML).header("X-CSRF-TOKEN", tokens[0]).cookies(cookies -> {
+			cookies.add(SESSION_KEY, tokens[1]);
+		})
+		.exchange().expectStatus().isFound().expectHeader()
+		.value("Location", endsWith("/venue/1"));
+		
+		assertThat(1, equalTo(countRowsInTableWhere("venues", "id = 1")));
+	}
+	
+	@Test
+	public void testDeleteVenueNoAuthentication() {
+		assertThat(1, equalTo(countRowsInTableWhere("venues", "id = 7")));
+		String[] tokens = login();
+		
+		client.delete().uri("/venues/7").accept(MediaType.TEXT_HTML).header("X-CSRF-TOKEN", tokens[0])
+		.exchange().expectStatus().isFound().expectHeader()
+		.value("Location", endsWith("/sign-in"));
+		
+		assertThat(1, equalTo(countRowsInTableWhere("venues", "id = 7")));
+	}
+	
+	@Test
+	public void testDeleteNonExistingVenue() {
+		assertThat(0, equalTo(countRowsInTableWhere("venues", "id = 31231231")));
+		String[] tokens = login();
+		
+		client.delete().uri("/venues/31231231").accept(MediaType.TEXT_HTML).header("X-CSRF-TOKEN", tokens[0]).cookies(cookies -> {
+			cookies.add(SESSION_KEY, tokens[1]);
+		})
+		.exchange().expectStatus().isFound().expectHeader()
+		.value("Location", endsWith("/venues"));
+		
+		assertThat(numRows, equalTo(countRowsInTable("venues")));
+	}
+	
+	@Test
 	public void updateVenueNoAuthenticationTest() {
 		String[] tokens = login();
 
